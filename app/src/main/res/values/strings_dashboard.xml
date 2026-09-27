@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_greeting">Hello!</string>
+    <string name="dashboard_greeting_name">Hello, %1$s!</string>
+
+    <string name="dashboard_this_week">This week</string>
+    <plurals name="dashboard_entries_word">
+        <item quantity="one">entry</item>
+        <item quantity="other">entries</item>
+    </plurals>
+    <plurals name="dashboard_entries">
+        <item quantity="one">%d entry</item>
+        <item quantity="other">%d entries</item>
+    </plurals>
+    <string name="dashboard_entries_and_pieces">%1$s · %2$s</string>
+    <string name="dashboard_bars_description">Entries per day this week: %1$s</string>
+    <string name="dashboard_log_manual">Log waste</string>
+    <string name="dashboard_log_photo">With photo</string>
+
+    <string name="dashboard_next_log_title">Log today\'s waste</string>
+    <string name="dashboard_next_log_body">Threw something out today? Logging it takes a few seconds.</string>
+    <plurals name="dashboard_next_keep_title">
+        <item quantity="one">You logged %d item today</item>
+        <item quantity="other">You logged %d items today</item>
+    </plurals>
+    <string name="dashboard_next_keep_body">Nice work. Add anything else you throw out today.</string>
+    <string name="dashboard_next_idea_title">Pick an idea to try this week</string>
+    <string name="dashboard_next_idea_body">Your %1$s report has simple ideas for your hotspots. Choose one that fits your week.</string>
+    <string name="dashboard_next_idea_action">See ideas</string>
+    <plurals name="dashboard_next_fix_title">
+        <item quantity="one">%d entry couldn\'t sync</item>
+        <item quantity="other">%d entries couldn\'t sync</item>
+    </plurals>
+    <string name="dashboard_next_fix_body">Take a quick look in Audit. Editing an entry tries again.</string>
+    <string name="dashboard_next_fix_action">Review in Audit</string>
+
+    <string name="dashboard_mix_percent">%1$d%%</string>
+    <string name="dashboard_mix_description">Share of this week\'s entries: %1$s</string>
+    <plurals name="dashboard_mix_special">
+        <item quantity="one">Plus %d special waste entry, logged but not included.</item>
+        <item quantity="other">Plus %d special waste entries, logged but not included.</item>
+    </plurals>
+
+    <plurals name="dashboard_pending_short">
+        <item quantity="one">%d change waiting to sync</item>
+        <item quantity="other">%d changes waiting to sync</item>
+    </plurals>
+
+    <string name="dashboard_report_ready">Last week\'s report</string>
+    <string name="dashboard_report_latest">Your latest report</string>
+    <string name="dashboard_report_offline">Offline summary</string>
+    <string name="dashboard_report_offline_body">Connect to the internet to get ideas for your hotspots.</string>
+    <string name="dashboard_report_open">Open report</string>
+    <string name="dashboard_report_only_special">Only special waste was logged, so there are no hotspots this time.</string>
+    <string name="dashboard_first_report_title">Your first weekly report</string>
+    <string name="dashboard_first_report_body">When the week ends on Saturday night, you\'ll get a report with your top hotspots and simple ideas to try.</string>
+
+    <string name="dashboard_hotspot_title">Top hotspot</string>
+    <string name="dashboard_trying_title">You\'re trying</string>
+
+    <string name="dashboard_impact_title">How your changes went</string>
+    <string name="dashboard_impact_quantities">%1$s → %2$s</string>
+    <string name="dashboard_impact_decreased">Decreased</string>
+    <string name="dashboard_impact_same">Same</string>
+    <string name="dashboard_impact_increased">Increased</string>
+
+    <string name="dashboard_recent_title">Recent entries</string>
+    <string name="dashboard_view_all">View all</string>
+    <string name="dashboard_recent_empty">Your entries this week will show up here. Every item you log helps you spot small changes.</string>
+</resources>
