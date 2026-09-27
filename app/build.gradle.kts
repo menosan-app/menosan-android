@@ -49,7 +49,7 @@ android {
             dimension = "env"
             buildConfigField(
                 "String", "API_BASE_URL",
-                quoted(localOrEnv("API_BASE_URL_PROD") ?: "https://menosan-api-staging.onrender.com/"),
+                quoted(localOrEnv("API_BASE_URL_PROD") ?: "https://menosan-api.onrender.com/"),
             )
             buildConfigField("long", "HTTP_CONNECT_TIMEOUT_SECONDS", "75L")
             buildConfigField("long", "HTTP_READ_TIMEOUT_SECONDS", "75L")
