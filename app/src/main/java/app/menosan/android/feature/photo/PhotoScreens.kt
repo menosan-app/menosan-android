@@ -130,12 +130,19 @@ fun PhotoLogRoute(
             onChoosePhoto = choosePhoto,
             onLogManually = onLogManually,
         )
+        is PhotoStep.Crop -> PhotoCropScreen(
+            jpeg = step.jpeg,
+            onBack = viewModel::backToPick,
+            onAnalyze = viewModel::onCropConfirmed,
+            onAnotherPhoto = viewModel::backToPick,
+        )
         is PhotoStep.Analyzing -> PhotoAnalyzingScreen(wakingUp = step.wakingUp, onCancel = viewModel::backToPick)
         is PhotoStep.Failed -> PhotoErrorScreen(
             error = step.error,
             canRetry = step.error.kind.canRetrySame && state.canRetrySamePhoto,
             onBack = viewModel::backToPick,
             onRetry = viewModel::retry,
+            onCropAgain = if (state.canCropAgain) viewModel::cropAgain else null,
             onAnotherPhoto = viewModel::backToPick,
             onLogManually = onLogManually,
         )
@@ -277,6 +284,7 @@ fun PhotoErrorScreen(
     canRetry: Boolean,
     onBack: () -> Unit,
     onRetry: () -> Unit,
+    onCropAgain: (() -> Unit)?,
     onAnotherPhoto: () -> Unit,
     onLogManually: () -> Unit,
 ) {
@@ -326,12 +334,18 @@ fun PhotoErrorScreen(
             when {
                 canRetry -> {
                     PrimaryButton(stringResource(R.string.photo_try_again), onClick = onRetry)
+                    if (onCropAgain != null) SecondaryButton(stringResource(R.string.photo_crop_again), onClick = onCropAgain)
                     SecondaryButton(stringResource(R.string.photo_try_another), onClick = onAnotherPhoto)
                     SecondaryButton(stringResource(R.string.photo_log_manually), onClick = onLogManually)
                 }
                 error.kind == PhotoErrorKind.RATE_LIMITED -> {
                     PrimaryButton(stringResource(R.string.photo_log_manually), onClick = onLogManually)
                     SecondaryButton(stringResource(R.string.photo_back), onClick = onBack)
+                }
+                onCropAgain != null && error.kind == PhotoErrorKind.NOT_WASTE -> {
+                    PrimaryButton(stringResource(R.string.photo_crop_again), onClick = onCropAgain)
+                    SecondaryButton(stringResource(R.string.photo_try_another), onClick = onAnotherPhoto)
+                    SecondaryButton(stringResource(R.string.photo_log_manually), onClick = onLogManually)
                 }
                 else -> {
                     PrimaryButton(stringResource(R.string.photo_try_another), onClick = onAnotherPhoto)
@@ -442,7 +456,7 @@ fun PhotoReviewScreen(
 }
 
 @Composable
-private fun PrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = true, icon: ImageVector? = null) {
+internal fun PrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = true, icon: ImageVector? = null) {
     Button(
         onClick = onClick,
         enabled = enabled,
@@ -462,7 +476,7 @@ private fun PrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = 
 }
 
 @Composable
-private fun SecondaryButton(text: String, onClick: () -> Unit) {
+internal fun SecondaryButton(text: String, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.small,

@@ -26,8 +26,10 @@ class PhotoUnreadableException(message: String, cause: Throwable? = null) : Exce
 
 class PhotoTooLargeException : Exception("The photo is too large.")
 
-fun interface PhotoProcessor {
+interface PhotoProcessor {
     suspend fun prepare(input: PhotoInput): ByteArray
+
+    suspend fun crop(jpeg: ByteArray, area: CropRect): ByteArray
 }
 
 data class CaptureTarget(val file: File, val uri: String)

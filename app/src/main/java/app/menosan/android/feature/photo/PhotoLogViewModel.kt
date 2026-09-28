@@ -29,6 +29,8 @@ import javax.inject.Inject
 sealed interface PhotoStep {
     data object Pick : PhotoStep
 
+    class Crop(val jpeg: ByteArray) : PhotoStep
+
     data class Analyzing(val wakingUp: Boolean = false) : PhotoStep
 
     data class Failed(val error: PhotoError) : PhotoStep
@@ -48,6 +50,7 @@ data class PhotoUiState(
     val online: Boolean = true,
     val step: PhotoStep = PhotoStep.Pick,
     val canRetrySamePhoto: Boolean = false,
+    val canCropAgain: Boolean = false,
 )
 
 sealed interface PhotoEvent {
@@ -76,6 +79,12 @@ class PhotoLogViewModel @Inject constructor(
         set(value) {
             field = value
             _state.update { it.copy(canRetrySamePhoto = value != null) }
+        }
+
+    private var cropSource: ByteArray? = null
+        set(value) {
+            field = value
+            _state.update { it.copy(canCropAgain = value != null) }
         }
 
     private var pendingCapture: File?
@@ -120,6 +129,31 @@ class PhotoLogViewModel @Inject constructor(
         if (uri != null) analyze(PhotoInput.Gallery(uri))
     }
 
+    fun onCropConfirmed(area: CropRect) {
+        val source = (_state.value.step as? PhotoStep.Crop)?.jpeg ?: return
+        runAnalysis {
+            val jpeg = try {
+                processor.crop(source, area)
+            } catch (_: PhotoUnreadableException) {
+                fail(PhotoError(PhotoErrorKind.UNREADABLE))
+                return@runAnalysis
+            } catch (_: PhotoTooLargeException) {
+                fail(PhotoError(PhotoErrorKind.IMAGE_TOO_LARGE))
+                return@runAnalysis
+            }
+            lastJpeg = jpeg
+            upload(jpeg)
+        }
+    }
+
+    fun cropAgain() {
+        val source = cropSource ?: return backToPick()
+        job?.cancel()
+        job = null
+        lastJpeg = null
+        _state.update { it.copy(step = PhotoStep.Crop(source)) }
+    }
+
     fun retry() {
         val jpeg = lastJpeg ?: return backToPick()
         runAnalysis { upload(jpeg) }
@@ -129,6 +163,7 @@ class PhotoLogViewModel @Inject constructor(
         job?.cancel()
         job = null
         lastJpeg = null
+        cropSource = null
         _state.update { it.copy(step = PhotoStep.Pick) }
     }
 
@@ -170,11 +205,13 @@ class PhotoLogViewModel @Inject constructor(
 
     override fun onCleared() {
         lastJpeg = null
+        cropSource = null
         files.deleteAll(keep = null)
     }
 
     private fun analyze(input: PhotoInput) = runAnalysis {
         lastJpeg = null
+        cropSource = null
         val jpeg = try {
             processor.prepare(input)
         } catch (_: PhotoUnreadableException) {
@@ -186,8 +223,8 @@ class PhotoLogViewModel @Inject constructor(
         } finally {
             if (input is PhotoInput.Camera) files.delete(input.file)
         }
-        lastJpeg = jpeg
-        upload(jpeg)
+        cropSource = jpeg
+        _state.update { it.copy(step = PhotoStep.Crop(jpeg)) }
     }
 
     private fun runAnalysis(block: suspend () -> Unit) {
@@ -212,6 +249,7 @@ class PhotoLogViewModel @Inject constructor(
                 val taxonomy = taxonomySource.taxonomy()
                 val analysis = result.value
                 lastJpeg = null
+                cropSource = null
                 _state.update {
                     it.copy(step = PhotoStep.Review(taxonomy, PhotoReview.from(analysis.suggestion, analysis.warning, taxonomy)))
                 }

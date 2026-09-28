@@ -10,7 +10,14 @@
     <string name="photo_log_manually_instead">Log manually instead</string>
     <string name="photo_ai_notice_title">About AI suggestions</string>
     <string name="photo_ai_notice_body">Menosan suggests the item details from your photo. AI suggestions can be wrong, so you\'ll check them before saving. Your photo isn\'t stored.</string>
-    <string name="photo_tip">Tip: one kind of item per photo, in good light, works best.</string>
+    <string name="photo_tip">Tip: one kind of item per photo, in good light, works best. You can crop out the background next.</string>
+
+    <string name="photo_crop_title">Focus on the Waste</string>
+    <string name="photo_crop_body">Drag the corners so the box covers just the waste. Leave out the background.</string>
+    <string name="photo_crop_analyze">Analyze Photo</string>
+    <string name="photo_crop_reset">Use the whole photo</string>
+    <string name="photo_crop_again">Crop again</string>
+    <string name="photo_crop_image_description">Your photo. The box shows the part that will be analyzed.</string>
 
     <string name="photo_analyzing_title">Analyzing your Photo</string>
     <string name="photo_analyzing_body">Identifying your item to help you log your waste</string>
@@ -23,7 +30,7 @@
     <string name="photo_error_network_title">No connection right now</string>
     <string name="photo_error_network_body">Photo logging needs internet. Check your connection and try again, or log this item manually.</string>
     <string name="photo_error_not_waste_title">We couldn\'t spot waste here</string>
-    <string name="photo_error_not_waste_body">Try a closer photo of the item on a plain surface, or log it manually.</string>
+    <string name="photo_error_not_waste_body">Try cropping closer around the item, or take a closer photo. You can always log it manually.</string>
     <string name="photo_error_analysis_title">We couldn\'t read this photo</string>
     <string name="photo_error_analysis_body">This happens sometimes. Try again, or use a clearer photo. You can always log it manually.</string>
     <string name="photo_error_too_large_title">This photo is too large</string>

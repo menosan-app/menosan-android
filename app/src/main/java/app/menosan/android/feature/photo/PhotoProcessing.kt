@@ -57,6 +57,31 @@ class AndroidPhotoProcessor @Inject constructor(
         }
     }
 
+    override suspend fun crop(jpeg: ByteArray, area: CropRect): ByteArray = withContext(Dispatchers.IO) {
+        if (area.isFull) return@withContext jpeg
+        try {
+            val source = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size)
+                ?: throw PhotoUnreadableException("The photo couldn't be decoded.")
+            val rect = area.toPixels(PixelSize(source.width, source.height))
+            val cropped = Bitmap.createBitmap(source, rect.x, rect.y, rect.width, rect.height)
+            if (cropped !== source) source.recycle()
+            ensureActive()
+            try {
+                encode(cropped)
+            } finally {
+                cropped.recycle()
+            }
+        } catch (e: PhotoUnreadableException) {
+            throw e
+        } catch (e: PhotoTooLargeException) {
+            throw e
+        } catch (e: IllegalArgumentException) {
+            throw PhotoUnreadableException("The photo couldn't be cropped.", e)
+        } catch (e: OutOfMemoryError) {
+            throw PhotoUnreadableException("Not enough memory for the photo.", e)
+        }
+    }
+
     private fun open(input: PhotoInput): InputStream = when (input) {
         is PhotoInput.Camera -> FileInputStream(input.file)
         is PhotoInput.Gallery -> context.contentResolver.openInputStream(input.uri.toUri())
