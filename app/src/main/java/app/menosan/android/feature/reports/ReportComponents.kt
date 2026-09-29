@@ -58,7 +58,7 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier, subtitle: String?
 
 @Composable
 fun ShareBar(fraction: Float, color: Color, modifier: Modifier = Modifier) {
-    val track = MaterialTheme.colorScheme.surfaceVariant
+    val track = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
     Canvas(
         modifier
             .fillMaxWidth()

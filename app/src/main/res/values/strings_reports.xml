@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="insights_title">Insights</string>
-    <string name="insights_subtitle">Your weekly reports, hotspots, and progress.</string>
-    <string name="insights_latest_label">Your latest report</string>
+    <string name="insights_subtitle">See your waste, find a hotspot, and try a small change.</string>
+    <string name="insights_latest_label">Latest weekly report</string>
     <string name="insights_open_report">Open report</string>
+    <plurals name="insights_hotspots_found">
+        <item quantity="one">%d hotspot found</item>
+        <item quantity="other">%d hotspots found</item>
+    </plurals>
+    <string name="insights_focus_title">Focus this week</string>
+    <string name="insights_focus_body">%1$s across %2$s. This is your top hotspot.</string>
+    <string name="insights_focus_hint">Start with one easy change</string>
+    <string name="insights_see_ideas">See ideas</string>
     <string name="insights_past_reports">Past reports</string>
+    <string name="insights_past_private">Private to your household</string>
     <string name="insights_empty_title">No reports yet</string>
     <string name="insights_empty_body">Your first weekly report appears after your first full week of logging.</string>
     <string name="insights_empty_hint">Weeks run Sunday to Saturday. Keep logging and your report will be ready on Sunday.</string>
@@ -38,18 +47,36 @@
     <string name="reports_week_range_year">%1$s, %2$d</string>
 
     <string name="report_loading">Loading your report…</string>
+    <string name="report_week_caption">Your household\'s finished week · Sunday to Saturday</string>
+    <string name="report_tab_overview">Overview</string>
+    <string name="report_tab_hotspots">Hotspots</string>
+    <string name="report_tab_ideas">Ideas</string>
+    <string name="report_tab_progress">Progress</string>
+    <string name="report_glance_title">This week at a glance</string>
+    <string name="report_delta_line">%1$s (%2$s)</string>
+    <string name="report_focus_title">Where to focus</string>
+    <string name="report_explore_hotspots">Explore hotspots</string>
+    <string name="report_one_idea_title">One idea to try</string>
+    <string name="report_see_all_ideas">See all ideas</string>
+    <string name="report_show_logged">Show logged items</string>
+    <string name="report_hide_logged">Hide logged items</string>
+    <string name="report_hotspots_intro">These had the highest quantity or showed up most often in this week\'s entries.</string>
+    <string name="report_hotspot_rank">Hotspot %1$d</string>
+    <string name="report_hotspot_quantity_in">%1$s in %2$s</string>
+    <string name="report_progress_none_title">Nothing to measure yet</string>
+    <string name="report_progress_none_body">When you adopt an idea, your next report shows whether that item went down, stayed the same, or went up.</string>
+    <string name="report_progress_how_title">How this comparison works</string>
+    <string name="report_progress_how_body">Menosan compares what you logged for the same item in the week you adopted an idea and the week after. A change in your entries is a good sign, but it can\'t show exactly which action caused it.</string>
     <string name="report_not_found">There\'s no report for this week. Reports are made for finished weeks with at least one entry.</string>
     <string name="report_showing_saved">Showing your saved copy. Connect to the internet to update it.</string>
     <string name="report_offline_banner">Offline summary. Connect to the internet to get suggestions for your hotspots.</string>
     <string name="report_offline_banner_partial">Some comparisons will appear once you\'re back online.</string>
-    <string name="report_totals_title">This week\'s totals</string>
     <string name="report_totals_entries">Entries</string>
     <string name="report_totals_pieces">Pieces</string>
     <string name="report_totals_food">Food waste</string>
     <string name="report_categories_share_note">Share of this week\'s entries.</string>
-    <string name="report_categories_title">By category</string>
+    <string name="report_categories_title">Entries by category</string>
     <string name="report_category_share">%1$s%%</string>
-    <string name="report_breakdown_title">What you logged</string>
     <string name="report_breakdown_empty">Nothing in the analyzed categories this week.</string>
     <string name="report_special_line">Special waste: %1$s. Logged, not included in analysis.</string>
     <string name="report_comparison_title">Compared with the week before</string>
@@ -73,21 +100,17 @@
     <string name="report_comparison_food_more">%1$s more food waste than the week before</string>
     <string name="report_comparison_food_same">About the same amount of food waste as the week before</string>
     <string name="report_comparison_category_food">%1$s · food</string>
-    <string name="report_hotspots_title">Your hotspots</string>
-    <string name="report_hotspots_subtitle">Where most of your waste came from this week.</string>
     <string name="report_hotspots_special_only">You only logged special waste this week. It isn\'t included in the analysis, so there are no hotspots or suggestions this time.</string>
     <string name="report_top_hotspot">Top hotspot</string>
     <string name="report_criterion_most_frequent">Most frequent</string>
     <string name="report_criterion_highest_quantity">Highest quantity</string>
     <string name="report_criterion_avoidable">Avoidable</string>
 
-    <string name="report_ideas_title">Ideas to try this week</string>
     <string name="report_ideas_subtitle_latest">Pick one or two small changes. You\'ll see how they went in your next report.</string>
     <string name="report_ideas_tried_title">Ideas you tried</string>
     <string name="report_ideas_tried_subtitle">What you picked from this report.</string>
     <string name="report_ideas_tried_none">You didn\'t pick an idea from this report.</string>
     <string name="report_ideas_tried_for">For %1$s</string>
-    <string name="report_choose_hotspot">Choose a hotspot</string>
     <string name="report_ideas_none">No ideas for this hotspot yet.</string>
     <string name="report_type_prevent">Prevent</string>
     <string name="report_type_reduce">Reduce</string>

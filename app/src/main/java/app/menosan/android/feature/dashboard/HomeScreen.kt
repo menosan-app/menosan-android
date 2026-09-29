@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingFlat
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.EmojiObjects
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -69,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
+import app.menosan.android.core.network.LocalOnline
 import app.menosan.android.core.ui.components.Donut
 import app.menosan.android.core.ui.components.GroupedList
 import app.menosan.android.core.ui.components.MetaText
@@ -276,24 +278,45 @@ private fun CardButton(
 
 @Composable
 private fun LogButtons(actions: HomeActions, content: Color, container: Color, filled: Boolean) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        val manual = stringResource(R.string.dashboard_log_manual)
-        if (filled) {
-            CardButton(manual, content, container, Modifier.weight(1f), Icons.Outlined.EditNote, actions.onLogManually)
-        } else {
-            OutlinedLogButton(manual, Icons.Outlined.EditNote, content, actions.onLogManually, Modifier.weight(1f))
+    val online = LocalOnline.current
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            val manual = stringResource(R.string.dashboard_log_manual)
+            if (filled) {
+                CardButton(manual, content, container, Modifier.weight(1f), Icons.Outlined.EditNote, actions.onLogManually)
+            } else {
+                OutlinedLogButton(manual, Icons.Outlined.EditNote, content, actions.onLogManually, Modifier.weight(1f))
+            }
+            OutlinedLogButton(
+                stringResource(R.string.dashboard_log_photo),
+                if (online) Icons.Outlined.CameraAlt else Icons.Outlined.CloudOff,
+                content,
+                actions.onLogWithPhoto,
+                Modifier.weight(1f),
+                enabled = online,
+            )
         }
-        OutlinedLogButton(stringResource(R.string.dashboard_log_photo), Icons.Outlined.CameraAlt, content, actions.onLogWithPhoto, Modifier.weight(1f))
+        if (!online) {
+            Text(stringResource(R.string.photo_offline_body), style = MaterialTheme.typography.bodySmall, color = content.copy(alpha = 0.85f))
+        }
     }
 }
 
 @Composable
-private fun OutlinedLogButton(text: String, icon: ImageVector, color: Color, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun OutlinedLogButton(
+    text: String,
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
     OutlinedButton(
         onClick = onClick,
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(1.dp, color.copy(alpha = 0.6f)),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
+        border = BorderStroke(1.dp, color.copy(alpha = if (enabled) 0.6f else 0.3f)),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = color, disabledContentColor = color.copy(alpha = 0.5f)),
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
         modifier = modifier.heightIn(min = 52.dp),
     ) {

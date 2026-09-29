@@ -30,7 +30,7 @@ data object EntriesRoute
 data object HistoryRoute
 
 @Serializable
-data class ReportRoute(val weekStart: String)
+data class ReportRoute(val weekStart: String, val tab: String? = null)
 
 @Serializable
 data object SettingsRoute

@@ -43,14 +43,19 @@ data class ReportUiState(
 
 enum class ReportMessage { Adopted, Unadopted, WindowClosed, Offline, Failed }
 
+enum class ReportTab { OVERVIEW, HOTSPOTS, IDEAS, PROGRESS }
+
 @HiltViewModel
 class ReportViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: ReportRepository,
     private val taxonomy: TaxonomyRepository,
 ) : ViewModel() {
-    private val weekStart: LocalDate? =
-        runCatching { LocalDate.parse(savedStateHandle.toRoute<ReportRoute>().weekStart) }.getOrNull()
+    private val route: ReportRoute? = runCatching { savedStateHandle.toRoute<ReportRoute>() }.getOrNull()
+    private val weekStart: LocalDate? = runCatching { LocalDate.parse(route?.weekStart) }.getOrNull()
+
+    /** The tab the report opens on, e.g. Ideas when coming from the Insights "Focus this week" card. */
+    val initialTab: ReportTab = ReportTab.entries.firstOrNull { it.name == route?.tab } ?: ReportTab.OVERVIEW
 
     private val status = MutableStateFlow(ReportUiState(weekStart = weekStart, refreshing = weekStart != null, notFound = weekStart == null))
     private val labels = MutableStateFlow<Map<String, String>>(emptyMap())

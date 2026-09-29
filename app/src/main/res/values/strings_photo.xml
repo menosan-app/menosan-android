@@ -6,6 +6,7 @@
     <string name="photo_take">Take a Photo</string>
     <string name="photo_offline_title">You\'re offline</string>
     <string name="photo_offline_body">Photo logging needs internet — you can log manually.</string>
+    <string name="photo_needs_internet_short">Needs internet</string>
     <string name="photo_log_manually">Log manually</string>
     <string name="photo_log_manually_instead">Log manually instead</string>
     <string name="photo_ai_notice_title">About AI suggestions</string>

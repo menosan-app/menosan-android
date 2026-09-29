@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.Info
@@ -39,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -60,6 +62,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
 import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.WasteCategory
+import app.menosan.android.core.network.LocalOnline
+import app.menosan.android.core.ui.components.DISABLED_ALPHA
 import app.menosan.android.core.ui.components.BannerTone
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.MetaText
@@ -340,18 +344,34 @@ private fun CategoryCount(category: WasteCategory, total: CategoryTotal, modifie
 
 @Composable
 private fun QuickActions(onLogManually: () -> Unit, onScanWithPhoto: () -> Unit, modifier: Modifier = Modifier) {
+    val online = LocalOnline.current
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier) {
         QuickAction(Icons.Outlined.EditNote, R.string.audit_log_manual, R.string.audit_log_manual_body, onLogManually, Modifier.weight(1f))
-        QuickAction(Icons.Outlined.CameraAlt, R.string.audit_scan, R.string.audit_scan_body, onScanWithPhoto, Modifier.weight(1f))
+        QuickAction(
+            if (online) Icons.Outlined.CameraAlt else Icons.Outlined.CloudOff,
+            R.string.audit_scan,
+            if (online) R.string.audit_scan_body else R.string.photo_needs_internet_short,
+            onScanWithPhoto,
+            Modifier.weight(1f),
+            enabled = online,
+        )
     }
 }
 
 @Composable
-private fun QuickAction(icon: ImageVector, title: Int, body: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun QuickAction(
+    icon: ImageVector,
+    title: Int,
+    body: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
     Surface(shape = MaterialTheme.shapes.large, color = MenosanTheme.colors.card, modifier = modifier) {
         Row(
             Modifier
-                .clickable(role = Role.Button, onClick = onClick)
+                .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+                .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .heightIn(min = 64.dp)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,

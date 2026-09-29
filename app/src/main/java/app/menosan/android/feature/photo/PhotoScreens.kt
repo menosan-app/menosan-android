@@ -68,6 +68,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.ui.components.BrandLoading
+import app.menosan.android.core.ui.components.DISABLED_ALPHA
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.ScreenHeader
 import app.menosan.android.core.ui.theme.MenosanTheme
@@ -208,7 +209,7 @@ fun PhotoPickScreen(
 @Composable
 private fun UploadCard(enabled: Boolean, onChoosePhoto: () -> Unit, onTakePhoto: () -> Unit) {
     val outline = MaterialTheme.colorScheme.outline
-    val alpha = if (enabled) 1f else 0.45f
+    val alpha = if (enabled) 1f else DISABLED_ALPHA
     Column(
         modifier = Modifier
             .fillMaxWidth()

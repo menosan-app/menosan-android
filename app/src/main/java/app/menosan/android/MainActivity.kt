@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -16,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import app.menosan.android.core.auth.AuthService
 import app.menosan.android.core.network.ConnectivityObserver
+import app.menosan.android.core.network.LocalOnline
 import app.menosan.android.core.network.connectionNotices
 import app.menosan.android.core.settings.AppPreferences
 import app.menosan.android.core.settings.ThemeMode
@@ -66,8 +68,11 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-            MenosanTheme(darkTheme = darkTheme) {
-                MenosanNavHost(startDestination = remember { startDestination }, authUser = authUser)
+            val online by connectivity.online.collectAsStateWithLifecycle(initialValue = connectivity.isOnline())
+            CompositionLocalProvider(LocalOnline provides online) {
+                MenosanTheme(darkTheme = darkTheme) {
+                    MenosanNavHost(startDestination = remember { startDestination }, authUser = authUser)
+                }
             }
         }
     }

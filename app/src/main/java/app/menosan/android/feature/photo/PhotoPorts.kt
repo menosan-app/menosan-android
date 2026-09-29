@@ -49,6 +49,9 @@ fun interface PhotoAnalysisClient {
 interface NetworkStatus {
     fun isOnline(): Boolean
     val online: Flow<Boolean>
+
+    /** A request failed with a network error: ask Android to re-check the connection. */
+    fun reportUnreachable()
 }
 
 fun interface TaxonomySource {
@@ -77,6 +80,7 @@ abstract class PhotoModule {
         fun networkStatus(observer: ConnectivityObserver): NetworkStatus = object : NetworkStatus {
             override fun isOnline(): Boolean = observer.isOnline()
             override val online: Flow<Boolean> = observer.online
+            override fun reportUnreachable() = observer.reportUnreachable()
         }
 
         @Provides

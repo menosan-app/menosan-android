@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material.icons.outlined.Person
@@ -44,12 +45,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.menosan.android.R
+import app.menosan.android.core.network.LocalOnline
+import app.menosan.android.core.ui.components.DISABLED_ALPHA
 import app.menosan.android.core.ui.theme.MenosanTheme
 
 enum class TopLevelTab(
@@ -135,14 +139,21 @@ fun AddEntrySheet(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
-            AddEntryOption(Icons.Filled.PhotoLibrary, R.string.add_entry_photo, R.string.add_entry_photo_body, onScanWithPhoto)
+            val online = LocalOnline.current
+            AddEntryOption(
+                if (online) Icons.Filled.PhotoLibrary else Icons.Outlined.CloudOff,
+                R.string.add_entry_photo,
+                if (online) R.string.add_entry_photo_body else R.string.photo_offline_body,
+                onScanWithPhoto,
+                enabled = online,
+            )
             AddEntryOption(Icons.Filled.EditNote, R.string.add_entry_manual, R.string.add_entry_manual_body, onLogManually)
         }
     }
 }
 
 @Composable
-private fun AddEntryOption(icon: ImageVector, title: Int, body: Int, onClick: () -> Unit) {
+private fun AddEntryOption(icon: ImageVector, title: Int, body: Int, onClick: () -> Unit, enabled: Boolean = true) {
     Surface(
         shape = MaterialTheme.shapes.medium,
         color = MenosanTheme.colors.card,
@@ -151,7 +162,8 @@ private fun AddEntryOption(icon: ImageVector, title: Int, body: Int, onClick: ()
     ) {
         Row(
             modifier = Modifier
-                .clickable(role = Role.Button, onClick = onClick)
+                .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+                .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .heightIn(min = 72.dp)
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,

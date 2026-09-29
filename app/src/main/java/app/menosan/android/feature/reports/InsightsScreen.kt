@@ -1,20 +1,26 @@
 package app.menosan.android.feature.reports
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.outlined.CloudOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -38,12 +44,17 @@ import app.menosan.android.core.ui.components.GroupedList
 import app.menosan.android.core.ui.components.SectionHeader
 import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.ui.components.piecesAndGramsText
+import app.menosan.android.core.ui.components.quantityText
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.Pill
+import app.menosan.android.core.ui.components.primaryButtonColors
 import app.menosan.android.core.ui.theme.MenosanTheme
+import app.menosan.android.data.remote.dto.HotspotDto
 import app.menosan.android.data.repo.RefreshResult
 import app.menosan.android.data.repo.ReportListItem
 import app.menosan.android.data.repo.ReportRepository
+import app.menosan.android.data.repo.ReportView
+import app.menosan.android.data.repo.TaxonomyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,8 +66,12 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
+/** The top hotspot of the latest report, while its ideas can still be adopted. */
+data class InsightsFocus(val weekStart: LocalDate, val hotspot: HotspotDto, val label: String)
+
 data class InsightsUiState(
     val reports: List<ReportListItem> = emptyList(),
+    val focus: InsightsFocus? = null,
     val loaded: Boolean = false,
     val refreshing: Boolean = false,
     val problem: ReportProblem? = null,
@@ -65,14 +80,20 @@ data class InsightsUiState(
 @HiltViewModel
 class InsightsViewModel @Inject constructor(
     private val repository: ReportRepository,
+    private val taxonomy: TaxonomyRepository,
 ) : ViewModel() {
     private val status = MutableStateFlow(InsightsUiState(refreshing = true))
+    private val labels = MutableStateFlow<Map<String, String>>(emptyMap())
 
-    val state: StateFlow<InsightsUiState> = combine(repository.observeReports(), status) { reports, s ->
-        s.copy(reports = reports, loaded = true)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), InsightsUiState(refreshing = true))
+    val state: StateFlow<InsightsUiState> =
+        combine(repository.observeReports(), repository.observeLatestReport(), status, labels) { reports, latest, s, l ->
+            s.copy(reports = reports, focus = focusOf(reports.firstOrNull(), latest, l), loaded = true)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), InsightsUiState(refreshing = true))
 
     init {
+        viewModelScope.launch {
+            labels.value = taxonomy.taxonomy().subcategories.associate { it.code to it.label }
+        }
         refresh()
     }
 
@@ -87,15 +108,22 @@ class InsightsViewModel @Inject constructor(
     }
 }
 
+internal fun focusOf(latest: ReportListItem?, view: ReportView?, labels: Map<String, String>): InsightsFocus? {
+    if (latest == null || view == null || view.weekStart != latest.weekStart) return null
+    if (!view.canAdopt || view.isProvisional) return null
+    val top = view.report.hotspots.minByOrNull { it.rank } ?: return null
+    return InsightsFocus(view.weekStart, top, labels[top.subcategory] ?: top.subcategory)
+}
+
 @Composable
-fun InsightsScreen(onOpenReport: (LocalDate) -> Unit, viewModel: InsightsViewModel = hiltViewModel()) {
+fun InsightsScreen(onOpenReport: (LocalDate, ReportTab?) -> Unit, viewModel: InsightsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     InsightsContent(state = state, onRefresh = viewModel::refresh, onOpenReport = onOpenReport)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport: (LocalDate) -> Unit) {
+fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport: (LocalDate, ReportTab?) -> Unit) {
     Column(Modifier.fillMaxSize().screenInsetsPadding()) {
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)) {
             Text(
@@ -137,13 +165,27 @@ fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport:
                         if (state.problem != null) {
                             item { MessageBanner(stringResource(R.string.insights_showing_saved), icon = Icons.Outlined.CloudOff) }
                         }
-                        item { LatestReportCard(reports.first(), onClick = { onOpenReport(reports.first().weekStart) }) }
+                        item { LatestReportCard(reports.first(), onClick = { onOpenReport(reports.first().weekStart, null) }) }
+                        state.focus?.let { focus ->
+                            item {
+                                Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    SectionHeader(stringResource(R.string.insights_focus_title))
+                                    FocusCard(focus, onSeeIdeas = { onOpenReport(focus.weekStart, ReportTab.IDEAS) })
+                                }
+                            }
+                        }
                         if (reports.size > 1) {
                             item {
                                 Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    SectionHeader(stringResource(R.string.insights_past_reports))
+                                    SectionHeader(stringResource(R.string.insights_past_reports)) {
+                                        Text(
+                                            stringResource(R.string.insights_past_private),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
                                     GroupedList(reports.drop(1)) { report ->
-                                        ReportRow(report, onClick = { onOpenReport(report.weekStart) })
+                                        ReportRow(report, onClick = { onOpenReport(report.weekStart, null) })
                                     }
                                 }
                             }
@@ -176,26 +218,72 @@ private fun LatestReportCard(report: ReportListItem, onClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .clickable(role = Role.Button, onClick = onClick)
-                .padding(16.dp),
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.insights_latest_label), style = MaterialTheme.typography.titleSmall, color = onHero)
-                Spacer(Modifier.weight(1f))
-                if (report.isProvisional) {
-                    Pill(stringResource(R.string.reports_offline_summary), MenosanTheme.colors.calm, MenosanTheme.colors.onCalm)
-                }
-            }
+            Text(
+                stringResource(R.string.insights_latest_label).uppercase(),
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                color = onHero.copy(alpha = 0.8f),
+            )
             Text(
                 weekRangeWithYear(report.weekStart, report.weekEnd),
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = onHero,
             )
-            Text(reportStats(report), style = MaterialTheme.typography.bodyMedium, color = onHero)
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                listOf(entriesText(report.analyzedEntries), piecesAndGramsText(report.analyzedPieces, report.analyzedGrams)).joinToString(" · "),
+                style = MaterialTheme.typography.bodyMedium,
+                color = onHero.copy(alpha = 0.85f),
+            )
+            Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (report.isProvisional) {
+                    Pill(stringResource(R.string.reports_offline_summary), MenosanTheme.colors.calm, MenosanTheme.colors.onCalm)
+                } else if (report.hotspotCount > 0) {
+                    Pill(
+                        pluralStringResource(R.plurals.insights_hotspots_found, report.hotspotCount, report.hotspotCount),
+                        onHero.copy(alpha = 0.16f),
+                        onHero,
+                    )
+                }
                 Spacer(Modifier.weight(1f))
                 Text(stringResource(R.string.insights_open_report), style = MaterialTheme.typography.labelLarge, color = onHero)
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = onHero)
+            }
+        }
+    }
+}
+
+@Composable
+private fun FocusCard(focus: InsightsFocus, onSeeIdeas: () -> Unit) {
+    val hotspot = focus.hotspot
+    ReportCard {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
+            Box(
+                Modifier.size(40.dp).background(MenosanTheme.colors.mist, MaterialTheme.shapes.medium),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(focus.label, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                Text(
+                    stringResource(R.string.insights_focus_body, quantityText(hotspot.quantity, hotspot.unit), entriesText(hotspot.frequency)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(
+                stringResource(R.string.insights_focus_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            Button(onClick = onSeeIdeas, shape = MaterialTheme.shapes.small, colors = primaryButtonColors(), modifier = Modifier.heightIn(min = 44.dp)) {
+                Text(stringResource(R.string.insights_see_ideas))
             }
         }
     }

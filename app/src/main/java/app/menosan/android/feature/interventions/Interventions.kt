@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.quantityText
 import app.menosan.android.core.ui.components.Pill
+import app.menosan.android.core.ui.components.primaryButtonColors
+import app.menosan.android.core.ui.components.secondaryButtonBorder
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.data.remote.dto.ImpactDto
 import app.menosan.android.data.remote.dto.RecommendationDto
@@ -58,8 +60,9 @@ import app.menosan.android.feature.reports.typeLabel
 @Composable
 private fun RecommendationBadges(rec: RecommendationDto) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        val tag = MenosanTheme.colors.pending
-        val onTag = MenosanTheme.colors.onPending
+        // Neutral facts about the idea. Sand ("pending") is kept for things that need attention.
+        val tag = MenosanTheme.colors.mist
+        val onTag = MaterialTheme.colorScheme.onSurface
         if (rec.continued) {
             Pill(stringResource(R.string.report_keep_it_up), MenosanTheme.colors.highlight, MenosanTheme.colors.onHighlight)
         }
@@ -111,7 +114,7 @@ fun RecommendationCard(
 }
 
 @Composable
-private fun AdoptButton(adopted: Boolean, pending: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AdoptButton(adopted: Boolean, pending: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val content: @Composable () -> Unit = {
         if (pending) {
             CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
@@ -128,6 +131,7 @@ private fun AdoptButton(adopted: Boolean, pending: Boolean, onClick: () -> Unit,
             onClick = onClick,
             enabled = !pending,
             shape = MaterialTheme.shapes.small,
+            border = secondaryButtonBorder(),
             modifier = modifier.heightIn(min = 44.dp).semantics { contentDescription = description },
         ) { content() }
     } else {
@@ -135,6 +139,7 @@ private fun AdoptButton(adopted: Boolean, pending: Boolean, onClick: () -> Unit,
             onClick = onClick,
             enabled = !pending,
             shape = MaterialTheme.shapes.small,
+            colors = primaryButtonColors(),
             modifier = modifier.heightIn(min = 44.dp),
         ) { content() }
     }
@@ -183,6 +188,7 @@ fun RecommendationDetailsSheet(
                 OutlinedButton(
                     onClick = onDismiss,
                     shape = MaterialTheme.shapes.small,
+                    border = secondaryButtonBorder(),
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 ) { Text(stringResource(R.string.report_close)) }
                 if (canAdopt) {
@@ -190,6 +196,7 @@ fun RecommendationDetailsSheet(
                         onClick = onToggleAdopt,
                         enabled = !pending,
                         shape = MaterialTheme.shapes.small,
+                        colors = primaryButtonColors(),
                         modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                     ) {
                         if (pending) {

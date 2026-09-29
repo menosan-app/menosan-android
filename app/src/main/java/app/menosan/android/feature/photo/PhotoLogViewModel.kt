@@ -244,6 +244,11 @@ class PhotoLogViewModel @Inject constructor(
     }
 
     private suspend fun upload(jpeg: ByteArray) {
+        // The connection can drop after the photo was picked (e.g. while cropping): don't send it.
+        if (!network.isOnline()) {
+            fail(PhotoError(PhotoErrorKind.NETWORK))
+            return
+        }
         when (val result = analysisClient.analyze(jpeg)) {
             is ApiResult.Success -> {
                 val taxonomy = taxonomySource.taxonomy()
@@ -256,6 +261,7 @@ class PhotoLogViewModel @Inject constructor(
             }
             is ApiResult.Failure -> {
                 val error = PhotoError.from(result.error)
+                if (error.kind == PhotoErrorKind.NETWORK) network.reportUnreachable()
                 if (!error.kind.canRetrySame) lastJpeg = null
                 fail(error)
             }
