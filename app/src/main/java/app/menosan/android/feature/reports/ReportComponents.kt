@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.BannerTone
+import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.MenosanLogo
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.theme.MenosanTheme
@@ -41,6 +42,7 @@ fun ReportCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = MenosanTheme.colors.card,
+        shadowElevation = CardElevation,
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp), content = content)
     }

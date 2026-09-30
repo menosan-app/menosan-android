@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -46,6 +47,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.BannerTone
+import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.BrandLoading
 import app.menosan.android.core.ui.components.GoogleButton
 import app.menosan.android.core.ui.components.MenosanWordmark
@@ -219,6 +221,7 @@ private fun PrivacyCard(onReadMore: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(CardElevation, MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.medium)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),

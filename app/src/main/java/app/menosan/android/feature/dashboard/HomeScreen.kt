@@ -71,6 +71,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
 import app.menosan.android.core.network.LocalOnline
+import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.Donut
 import app.menosan.android.core.ui.components.GroupedList
 import app.menosan.android.core.ui.components.MetaText
@@ -227,7 +228,13 @@ private fun NextStepCard(step: NextStep, actions: HomeActions) {
         NextStep.LogToday -> stringResource(R.string.dashboard_next_log_body)
         is NextStep.KeepGoing -> stringResource(R.string.dashboard_next_keep_body)
     }
-    Surface(color = container, contentColor = content, shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+    Surface(
+        color = container,
+        contentColor = content,
+        shape = MaterialTheme.shapes.large,
+        shadowElevation = CardElevation,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
@@ -443,7 +450,12 @@ private fun WasteMix(state: HomeUiState) {
 
 @Composable
 private fun FirstReportCard() {
-    Surface(color = MenosanTheme.colors.mist, shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+    Surface(
+        color = MenosanTheme.colors.mist,
+        shape = MaterialTheme.shapes.large,
+        shadowElevation = CardElevation,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(Icons.Outlined.Insights, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

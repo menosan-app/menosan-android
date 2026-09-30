@@ -76,6 +76,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.settings.ThemeMode
+import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.Pill
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.feature.auth.PrivacyNotice
@@ -255,6 +256,7 @@ private fun QuietGroup(content: @Composable () -> Unit) {
     Surface(
         color = MenosanTheme.colors.card,
         shape = MaterialTheme.shapes.large,
+        shadowElevation = CardElevation,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(vertical = 4.dp)) { content() }

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -18,12 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.outlined.CloudOff
+import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -33,14 +33,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.GroupedList
+import app.menosan.android.core.ui.components.MetaText
+import app.menosan.android.core.ui.components.QuietCard
+import app.menosan.android.core.ui.components.SectionGap
 import app.menosan.android.core.ui.components.SectionHeader
 import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.ui.components.piecesAndGramsText
@@ -124,69 +130,71 @@ fun InsightsScreen(onOpenReport: (LocalDate, ReportTab?) -> Unit, viewModel: Ins
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport: (LocalDate, ReportTab?) -> Unit) {
-    Column(Modifier.fillMaxSize().screenInsetsPadding()) {
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)) {
-            Text(
-                stringResource(R.string.insights_title),
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            )
-            Text(
-                stringResource(R.string.insights_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        PullToRefreshBox(
-            isRefreshing = state.refreshing && state.reports.isNotEmpty(),
-            onRefresh = onRefresh,
+    PullToRefreshBox(
+        isRefreshing = state.refreshing && state.reports.isNotEmpty(),
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize().screenInsetsPadding(),
+    ) {
+        LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp),
+            verticalArrangement = Arrangement.spacedBy(SectionGap),
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                val reports = state.reports
-                when {
-                    reports.isEmpty() && (state.refreshing || !state.loaded) -> item {
-                        PatientLoading(stringResource(R.string.insights_loading))
+            item(key = "header") {
+                Column {
+                    Text(
+                        stringResource(R.string.insights_title),
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.semantics { heading() },
+                    )
+                    Text(
+                        stringResource(R.string.insights_subtitle),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            val reports = state.reports
+            when {
+                reports.isEmpty() && (state.refreshing || !state.loaded) -> item(key = "loading") {
+                    PatientLoading(stringResource(R.string.insights_loading))
+                }
+                reports.isEmpty() && state.problem != null -> item(key = "problem") {
+                    ProblemWithRetry(state.problem, onRetry = onRefresh)
+                }
+                reports.isEmpty() -> item(key = "empty") {
+                    GentleMessage(
+                        title = stringResource(R.string.insights_empty_title),
+                        body = stringResource(R.string.insights_empty_body),
+                        hint = stringResource(R.string.insights_empty_hint),
+                    )
+                }
+                else -> {
+                    if (state.problem != null) {
+                        item(key = "saved") { MessageBanner(stringResource(R.string.insights_showing_saved), icon = Icons.Outlined.CloudOff) }
                     }
-                    reports.isEmpty() && state.problem != null -> item {
-                        ProblemWithRetry(state.problem, onRetry = onRefresh)
+                    val latest = reports.first()
+                    item(key = "latest") {
+                        Section(
+                            stringResource(R.string.insights_latest_label),
+                            trailing = { MetaText(weekRangeWithYear(latest.weekStart, latest.weekEnd)) },
+                        ) { LatestReportCard(latest, onClick = { onOpenReport(latest.weekStart, null) }) }
                     }
-                    reports.isEmpty() -> item {
-                        GentleMessage(
-                            title = stringResource(R.string.insights_empty_title),
-                            body = stringResource(R.string.insights_empty_body),
-                            hint = stringResource(R.string.insights_empty_hint),
-                        )
-                    }
-                    else -> {
-                        if (state.problem != null) {
-                            item { MessageBanner(stringResource(R.string.insights_showing_saved), icon = Icons.Outlined.CloudOff) }
-                        }
-                        item { LatestReportCard(reports.first(), onClick = { onOpenReport(reports.first().weekStart, null) }) }
-                        state.focus?.let { focus ->
-                            item {
-                                Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    SectionHeader(stringResource(R.string.insights_focus_title))
-                                    FocusCard(focus, onSeeIdeas = { onOpenReport(focus.weekStart, ReportTab.IDEAS) })
-                                }
+                    state.focus?.let { focus ->
+                        item(key = "focus") {
+                            Section(stringResource(R.string.insights_focus_title)) {
+                                FocusCard(focus, onSeeIdeas = { onOpenReport(focus.weekStart, ReportTab.IDEAS) })
                             }
                         }
-                        if (reports.size > 1) {
-                            item {
-                                Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    SectionHeader(stringResource(R.string.insights_past_reports)) {
-                                        Text(
-                                            stringResource(R.string.insights_past_private),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                    GroupedList(reports.drop(1)) { report ->
-                                        ReportRow(report, onClick = { onOpenReport(report.weekStart, null) })
-                                    }
+                    }
+                    if (reports.size > 1) {
+                        item(key = "past") {
+                            Section(
+                                stringResource(R.string.insights_past_reports),
+                                trailing = { MetaText(stringResource(R.string.insights_past_private)) },
+                            ) {
+                                GroupedList(reports.drop(1), dividerInset = 72.dp) { report ->
+                                    ReportRow(report, onClick = { onOpenReport(report.weekStart, null) })
                                 }
                             }
                         }
@@ -194,6 +202,18 @@ fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport:
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Section(
+    title: String,
+    trailing: (@Composable RowScope.() -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(title, trailing = trailing)
+        content()
     }
 }
 
@@ -209,46 +229,46 @@ private fun reportStats(report: ReportListItem): String {
 
 @Composable
 private fun LatestReportCard(report: ReportListItem, onClick: () -> Unit) {
-    val onHero = MaterialTheme.colorScheme.onPrimaryContainer
-    Surface(
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.primaryContainer,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier
-                .clickable(role = Role.Button, onClick = onClick)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
+    QuietCard(onClick = onClick, onClickLabel = stringResource(R.string.insights_open_report), spacing = 16.dp) {
+        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
-                stringResource(R.string.insights_latest_label).uppercase(),
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = onHero.copy(alpha = 0.8f),
+                report.analyzedEntries.toString(),
+                style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold, lineHeight = 56.sp),
+                color = MaterialTheme.colorScheme.primary,
             )
-            Text(
-                weekRangeWithYear(report.weekStart, report.weekEnd),
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                color = onHero,
+            Column(Modifier.weight(1f).padding(bottom = 8.dp)) {
+                Text(
+                    pluralStringResource(R.plurals.dashboard_entries_word, report.analyzedEntries),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                )
+                MetaText(piecesAndGramsText(report.analyzedPieces, report.analyzedGrams))
+            }
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp),
             )
-            Text(
-                listOf(entriesText(report.analyzedEntries), piecesAndGramsText(report.analyzedPieces, report.analyzedGrams)).joinToString(" · "),
-                style = MaterialTheme.typography.bodyMedium,
-                color = onHero.copy(alpha = 0.85f),
-            )
-            Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                if (report.isProvisional) {
+        }
+        val offline = report.isProvisional
+        if (offline || report.hotspotCount > 0 || report.adoptedCount > 0) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (offline) {
                     Pill(stringResource(R.string.reports_offline_summary), MenosanTheme.colors.calm, MenosanTheme.colors.onCalm)
                 } else if (report.hotspotCount > 0) {
                     Pill(
                         pluralStringResource(R.plurals.insights_hotspots_found, report.hotspotCount, report.hotspotCount),
-                        onHero.copy(alpha = 0.16f),
-                        onHero,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
-                Spacer(Modifier.weight(1f))
-                Text(stringResource(R.string.insights_open_report), style = MaterialTheme.typography.labelLarge, color = onHero)
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = onHero)
+                if (report.adoptedCount > 0) {
+                    Pill(
+                        pluralStringResource(R.plurals.insights_adopted, report.adoptedCount, report.adoptedCount),
+                        MenosanTheme.colors.mist,
+                        MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             }
         }
     }
@@ -292,7 +312,13 @@ private fun FocusCard(focus: InsightsFocus, onSeeIdeas: () -> Unit) {
 @Composable
 private fun ReportRow(report: ReportListItem, onClick: () -> Unit) {
     Column(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(horizontal = 16.dp, vertical = 14.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Box(
+                Modifier.size(40.dp).background(MenosanTheme.colors.mist, MaterialTheme.shapes.medium),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Outlined.Insights, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     weekRangeWithYear(report.weekStart, report.weekEnd),

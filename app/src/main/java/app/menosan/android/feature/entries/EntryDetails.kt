@@ -52,6 +52,7 @@ import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.EntrySource
 import app.menosan.android.core.model.EntrySyncStatus
 import app.menosan.android.core.ui.components.BannerTone
+import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.ScreenHeader
 import app.menosan.android.core.ui.theme.MenosanTheme
@@ -204,6 +205,7 @@ private fun Details(state: EntryDetailsUiState.Loaded, onEdit: () -> Unit, onDel
             color = MenosanTheme.colors.card,
             shape = MaterialTheme.shapes.medium,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+            shadowElevation = CardElevation,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

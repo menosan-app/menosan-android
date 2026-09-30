@@ -1,6 +1,5 @@
 package app.menosan.android.feature.entries
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,21 +8,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -41,16 +35,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -60,11 +49,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
-import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.WasteCategory
 import app.menosan.android.core.network.LocalOnline
-import app.menosan.android.core.ui.components.DISABLED_ALPHA
 import app.menosan.android.core.ui.components.BannerTone
+import app.menosan.android.core.ui.components.CardElevation
+import app.menosan.android.core.ui.components.DISABLED_ALPHA
+import app.menosan.android.core.ui.components.GroupedList
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.MetaText
 import app.menosan.android.core.ui.components.QuietCard
@@ -75,14 +65,15 @@ import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.feature.logging.icon
 import app.menosan.android.feature.logging.labelRes
-import java.time.DayOfWeek
-import java.time.format.TextStyle
-import java.util.Locale
+
+/** How many of this week's newest entries the Audit tab shows before "View all". */
+private const val PREVIEW_ENTRIES = 5
 
 @Composable
 fun AuditRoute(
     onLogManually: () -> Unit,
     onScanWithPhoto: () -> Unit,
+    onViewAllEntries: () -> Unit,
     onOpenEntry: (String) -> Unit,
     onEditEntry: (String) -> Unit,
     viewModel: AuditViewModel = hiltViewModel(),
@@ -98,6 +89,7 @@ fun AuditRoute(
             state = state,
             onLogManually = onLogManually,
             onScanWithPhoto = onScanWithPhoto,
+            onViewAllEntries = onViewAllEntries,
             onOpenEntry = onOpenEntry,
             onEditEntry = onEditEntry,
             onDeleteEntry = viewModel::delete,
@@ -112,13 +104,13 @@ fun AuditScreen(
     state: AuditUiState,
     onLogManually: () -> Unit,
     onScanWithPhoto: () -> Unit,
+    onViewAllEntries: () -> Unit,
     onOpenEntry: (String) -> Unit,
     onEditEntry: (String) -> Unit,
     onDeleteEntry: (String) -> Unit,
     onDismissReverted: () -> Unit,
 ) {
     var pendingDelete by rememberSaveable { mutableStateOf<String?>(null) }
-    var showEarlier by rememberSaveable { mutableStateOf(false) }
     val summary = state.summary
 
     LazyColumn(
@@ -146,7 +138,7 @@ fun AuditScreen(
                 trailing = { MetaText(EntryFormats.weekRange(state.weekStart)) },
             )
         }
-        item { WeekCard(state, summary) }
+        item { WeekCard(summary) }
         item { QuickActions(onLogManually, onScanWithPhoto, Modifier.padding(top = 12.dp, bottom = SectionGap)) }
 
         if (state.revertedChanges > 0) {
@@ -187,28 +179,25 @@ fun AuditScreen(
             SectionHeader(
                 stringResource(R.string.audit_entries_title),
                 modifier = Modifier.padding(bottom = 8.dp),
-                trailing = { MetaText(pluralStringResource(R.plurals.audit_entries, summary.entries, summary.entries)) },
+                trailing = if (state.entries.isNotEmpty() || state.earlierWeeks.isNotEmpty()) {
+                    { TextButton(onClick = onViewAllEntries) { Text(stringResource(R.string.dashboard_view_all)) } }
+                } else {
+                    null
+                },
             )
         }
-        if (state.entries.isEmpty() && !state.loading) {
-            item { EmptyWeek() }
-        } else {
-            entryGroup(state, state.entries, onOpenEntry, onEditEntry) { pendingDelete = it }
-        }
-
-        if (state.earlierWeeks.isNotEmpty()) {
-            item {
-                TextButton(onClick = { showEarlier = !showEarlier }, modifier = Modifier.padding(top = 12.dp)) {
-                    Text(stringResource(if (showEarlier) R.string.audit_earlier_hide else R.string.audit_earlier_show))
-                }
-            }
-            if (showEarlier) {
-                item { MetaText(stringResource(R.string.audit_earlier_note), Modifier.padding(bottom = 4.dp)) }
-                state.earlierWeeks.forEach { week ->
-                    item(key = "week-${week.weekStart}") {
-                        SectionHeader(EntryFormats.weekRange(week.weekStart), Modifier.padding(top = 12.dp, bottom = 8.dp))
-                    }
-                    entryGroup(state, week.entries, onOpenEntry, onEditEntry) { pendingDelete = it }
+        item {
+            if (state.entries.isEmpty()) {
+                if (!state.loading) EmptyWeek()
+            } else {
+                GroupedList(state.entries.take(PREVIEW_ENTRIES), dividerInset = 64.dp) { entry ->
+                    EntryRow(
+                        entry = entry,
+                        subcategoryLabel = state.labelOf(entry),
+                        onOpen = { onOpenEntry(entry.id) },
+                        onEdit = { onEditEntry(entry.id) },
+                        onDelete = { pendingDelete = entry.id },
+                    )
                 }
             }
         }
@@ -225,47 +214,8 @@ fun AuditScreen(
     }
 }
 
-private fun LazyListScope.entryGroup(
-    state: AuditUiState,
-    entries: List<Entry>,
-    onOpen: (String) -> Unit,
-    onEdit: (String) -> Unit,
-    onDelete: (String) -> Unit,
-) {
-    itemsIndexed(entries, key = { _, entry -> entry.id }) { index, entry ->
-        val first = index == 0
-        val last = index == entries.lastIndex
-        val corner = 16.dp
-        Surface(
-            color = MenosanTheme.colors.card,
-            shape = RoundedCornerShape(
-                topStart = if (first) corner else 0.dp,
-                topEnd = if (first) corner else 0.dp,
-                bottomStart = if (last) corner else 0.dp,
-                bottomEnd = if (last) corner else 0.dp,
-            ),
-        ) {
-            Column {
-                if (!first) {
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        modifier = Modifier.padding(start = 64.dp),
-                    )
-                }
-                EntryRow(
-                    entry = entry,
-                    subcategoryLabel = state.labelOf(entry),
-                    onOpen = { onOpen(entry.id) },
-                    onEdit = { onEdit(entry.id) },
-                    onDelete = { onDelete(entry.id) },
-                )
-            }
-        }
-    }
-}
-
 @Composable
-private fun WeekCard(state: AuditUiState, summary: WeekSummary) {
+private fun WeekCard(summary: WeekSummary) {
     QuietCard(spacing = 20.dp) {
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
@@ -281,47 +231,9 @@ private fun WeekCard(state: AuditUiState, summary: WeekSummary) {
                 MetaText(piecesAndGramsText(summary.pieces, summary.grams))
             }
         }
-        DayBars(summary.entriesPerDay, EntryFormats.dayIndex(state.today).takeIf { state.today >= state.weekStart } ?: -1)
         Row {
             WasteCategory.entries.forEach { category ->
                 CategoryCount(category, summary.byCategory[category] ?: CategoryTotal(), Modifier.weight(1f))
-            }
-        }
-    }
-}
-
-@Composable
-private fun DayBars(perDay: List<Int>, todayIndex: Int) {
-    val max = (perDay.maxOrNull() ?: 0).coerceAtLeast(1)
-    val bar = MaterialTheme.colorScheme.secondary
-    val today = MaterialTheme.colorScheme.primary
-    val track = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
-    val days = DayOfWeek.entries.let { listOf(DayOfWeek.SUNDAY) + it.dropLast(1) }
-    val labels = days.map { it.getDisplayName(TextStyle.SHORT, Locale.ENGLISH) }
-    val description = stringResource(R.string.audit_bars_description, labels.zip(perDay).joinToString { (d, n) -> "$d $n" })
-    Column(Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = description }) {
-        Canvas(Modifier.fillMaxWidth().height(48.dp)) {
-            val slot = size.width / 7f
-            val width = (slot * 0.42f).coerceAtMost(20.dp.toPx())
-            val radius = CornerRadius(width / 2f, width / 2f)
-            perDay.forEachIndexed { i, count ->
-                val left = i * slot + (slot - width) / 2f
-                drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
-                if (count > 0) {
-                    val h = (size.height * count / max).coerceAtLeast(width)
-                    drawRoundRect(if (i == todayIndex) today else bar, Offset(left, size.height - h), Size(width, h), radius)
-                }
-            }
-        }
-        Row(Modifier.fillMaxWidth().padding(top = 4.dp)) {
-            labels.forEachIndexed { i, label ->
-                Text(
-                    label.take(1),
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = if (i == todayIndex) FontWeight.Bold else FontWeight.Normal),
-                    textAlign = TextAlign.Center,
-                    color = if (i == todayIndex) today else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
             }
         }
     }
@@ -367,7 +279,12 @@ private fun QuickAction(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Surface(shape = MaterialTheme.shapes.large, color = MenosanTheme.colors.card, modifier = modifier) {
+    Surface(
+        shape = MaterialTheme.shapes.large,
+        color = MenosanTheme.colors.card,
+        shadowElevation = CardElevation,
+        modifier = modifier,
+    ) {
         Row(
             Modifier
                 .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
@@ -387,8 +304,13 @@ private fun QuickAction(
 }
 
 @Composable
-private fun EmptyWeek() {
-    Surface(color = MenosanTheme.colors.mist, shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+internal fun EmptyWeek() {
+    Surface(
+        color = MenosanTheme.colors.mist,
+        shape = MaterialTheme.shapes.large,
+        shadowElevation = CardElevation,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(Icons.Outlined.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Column {

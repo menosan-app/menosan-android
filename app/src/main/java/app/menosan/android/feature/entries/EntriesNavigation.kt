@@ -15,6 +15,14 @@ fun NavGraphBuilder.entriesScreens(navController: NavHostController) {
         AuditRoute(
             onLogManually = { navController.navigate(LogManualRoute()) },
             onScanWithPhoto = { navController.navigate(LogPhotoRoute) },
+            onViewAllEntries = { navController.navigate(AllEntriesRoute) { launchSingleTop = true } },
+            onOpenEntry = { navController.navigate(EntryDetailsRoute(it)) },
+            onEditEntry = { navController.navigate(LogManualRoute(entryId = it)) },
+        )
+    }
+    composable<AllEntriesRoute> {
+        AllEntriesRouteScreen(
+            onBack = { navController.popBackStack() },
             onOpenEntry = { navController.navigate(EntryDetailsRoute(it)) },
             onEditEntry = { navController.navigate(LogManualRoute(entryId = it)) },
         )

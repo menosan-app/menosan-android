@@ -26,6 +26,9 @@ import app.menosan.android.core.ui.theme.MenosanTheme
 
 val SectionGap = 24.dp
 
+/** Shadow under every card, so cards stand out from the page background. */
+val CardElevation = 3.dp
+
 @Composable
 fun SectionHeader(
     title: String,
@@ -58,6 +61,7 @@ fun QuietCard(
     Surface(
         color = MenosanTheme.colors.card,
         shape = MaterialTheme.shapes.large,
+        shadowElevation = CardElevation,
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(
@@ -76,7 +80,12 @@ fun <T> GroupedList(
     dividerInset: androidx.compose.ui.unit.Dp = 16.dp,
     row: @Composable (T) -> Unit,
 ) {
-    Surface(color = MenosanTheme.colors.card, shape = MaterialTheme.shapes.large, modifier = modifier.fillMaxWidth()) {
+    Surface(
+        color = MenosanTheme.colors.card,
+        shape = MaterialTheme.shapes.large,
+        shadowElevation = CardElevation,
+        modifier = modifier.fillMaxWidth(),
+    ) {
         Column {
             items.forEachIndexed { index, item ->
                 if (index > 0) {

@@ -65,7 +65,6 @@
         <item quantity="one">entry</item>
         <item quantity="other">entries</item>
     </plurals>
-    <string name="audit_bars_description">Entries per day: %1$s</string>
     <string name="audit_log_manual">Log Waste Manually</string>
     <string name="audit_log_manual_body">Add a new entry</string>
     <string name="audit_scan">Scan with Photo</string>
@@ -89,6 +88,7 @@
     <string name="audit_earlier_show">Show earlier weeks</string>
     <string name="audit_earlier_hide">Hide earlier weeks</string>
     <string name="audit_earlier_note">Past weeks are read-only.</string>
+    <string name="entries_all_title">All entries</string>
 
     <string name="sync_synced">Synced</string>
     <string name="sync_pending">To Sync</string>
