@@ -76,7 +76,7 @@ fun SignInContent(
             title = stringResource(
                 if (state.phase == SignInPhase.CheckingAccount) R.string.sign_in_checking_account else R.string.sign_in_signing_in,
             ),
-            subtitle = if (state.slowServer) stringResource(R.string.sign_in_waking_server) else null,
+            subtitle = if (state.slowServer) stringResource(R.string.server_waking) else null,
             modifier = Modifier.safeDrawingPadding(),
         )
         return

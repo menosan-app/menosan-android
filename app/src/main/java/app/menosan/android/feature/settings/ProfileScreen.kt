@@ -309,7 +309,7 @@ private fun ProfileDialogs(state: ProfileUiState, viewModel: ProfileViewModel) {
             onConfirm = viewModel::confirmExport,
             onDismiss = viewModel::dismissDialog,
         )
-        is ProfileDialog.LogoutWarning -> LogoutWarningDialog(dialog.pendingCount, viewModel::syncFirst, viewModel::logOutAnyway, viewModel::dismissDialog)
+        is ProfileDialog.LogoutWarning -> LogoutWarningDialog(dialog.unsyncedCount, dialog.canSync, viewModel::syncFirst, viewModel::logOutAnyway, viewModel::dismissDialog)
         is ProfileDialog.DeleteAccount -> DeleteAccountDialog(dialog, viewModel::onDeleteTextChange, viewModel::confirmDelete, viewModel::dismissDialog)
         null -> Unit
     }
@@ -397,7 +397,7 @@ private fun ConfirmDialog(
         text = { Text(body, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
         confirmButton = {
             DialogButtons(
-                cancel = stringResource(R.string.profile_cancel),
+                cancel = stringResource(R.string.action_cancel),
                 confirm = confirm,
                 onCancel = onDismiss,
                 onConfirm = onConfirm,
@@ -409,22 +409,31 @@ private fun ConfirmDialog(
 }
 
 @Composable
-private fun LogoutWarningDialog(pendingCount: Int, onSyncFirst: () -> Unit, onLogOutAnyway: () -> Unit, onDismiss: () -> Unit) {
+private fun LogoutWarningDialog(unsyncedCount: Int, canSync: Boolean, onSyncFirst: () -> Unit, onLogOutAnyway: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MenosanTheme.colors.card,
         icon = { Icon(Icons.Outlined.SyncProblem, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(36.dp)) },
         title = { Text(stringResource(R.string.profile_logout_warning_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleLarge) },
         text = {
-            Text(
-                pluralStringResource(R.plurals.profile_logout_warning_body, pendingCount, pendingCount),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    pluralStringResource(R.plurals.profile_logout_warning_body, unsyncedCount, unsyncedCount),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (!canSync) {
+                    Text(
+                        stringResource(R.string.profile_logout_fix_hint),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
         },
         confirmButton = {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                PrimaryButton(stringResource(R.string.profile_logout_sync_first), onSyncFirst)
+                if (canSync) PrimaryButton(stringResource(R.string.profile_logout_sync_first), onSyncFirst)
                 OutlinedButton(
                     onClick = onLogOutAnyway,
                     shape = MaterialTheme.shapes.small,
@@ -435,7 +444,7 @@ private fun LogoutWarningDialog(pendingCount: Int, onSyncFirst: () -> Unit, onLo
                     Text(stringResource(R.string.profile_logout_anyway))
                 }
                 TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                    Text(stringResource(R.string.profile_cancel))
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         },
@@ -497,8 +506,8 @@ private fun DeleteAccountDialog(
         },
         confirmButton = {
             DialogButtons(
-                cancel = stringResource(R.string.profile_cancel),
-                confirm = stringResource(if (dialog.deleting) R.string.profile_deleting else R.string.profile_delete_confirm),
+                cancel = stringResource(R.string.action_cancel),
+                confirm = stringResource(if (dialog.deleting) R.string.profile_deleting else R.string.action_delete),
                 onCancel = onDismiss,
                 onConfirm = onConfirm,
                 confirmColor = MaterialTheme.colorScheme.error,

@@ -198,7 +198,7 @@ fun DeleteEntryDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
                     border = secondaryButtonBorder(),
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 ) {
-                    Text(stringResource(R.string.delete_cancel), color = MaterialTheme.colorScheme.onSurface)
+                    Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurface)
                 }
                 Button(
                     onClick = onConfirm,
@@ -209,7 +209,7 @@ fun DeleteEntryDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
                     ),
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 ) {
-                    Text(stringResource(R.string.delete_confirm))
+                    Text(stringResource(R.string.action_delete))
                 }
             }
         },

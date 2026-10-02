@@ -64,7 +64,6 @@ fun AllEntriesRouteScreen(
     }
 }
 
-/** Every entry of this week, plus the two earlier weeks kept on the device (read-only). */
 @Composable
 fun AllEntriesScreen(
     state: AuditUiState,
@@ -87,7 +86,7 @@ fun AllEntriesScreen(
                 SectionHeader(
                     EntryFormats.weekRange(state.weekStart),
                     modifier = Modifier.padding(bottom = 8.dp),
-                    trailing = { MetaText(pluralStringResource(R.plurals.audit_entries, state.entries.size, state.entries.size)) },
+                    trailing = { MetaText(pluralStringResource(R.plurals.count_entries, state.entries.size, state.entries.size)) },
                 )
             }
             if (state.entries.isEmpty()) {
@@ -109,7 +108,7 @@ fun AllEntriesScreen(
                             SectionHeader(
                                 EntryFormats.weekRange(week.weekStart),
                                 modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
-                                trailing = { MetaText(pluralStringResource(R.plurals.audit_entries, week.entries.size, week.entries.size)) },
+                                trailing = { MetaText(pluralStringResource(R.plurals.count_entries, week.entries.size, week.entries.size)) },
                             )
                         }
                         entryList("entries-${week.weekStart}", state, week.entries, onOpenEntry, onEditEntry, onDelete)
@@ -130,7 +129,6 @@ fun AllEntriesScreen(
     }
 }
 
-/** One card per week, so the shadow runs around the whole list without seams between rows. */
 private fun LazyListScope.entryList(
     key: String,
     state: AuditUiState,

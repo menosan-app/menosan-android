@@ -106,7 +106,7 @@ class DefaultEntryRepository internal constructor(
 
     override fun observePendingCount(): Flow<Int> = dao.observePendingCount()
 
-    override suspend fun hasPendingChanges(): Boolean = dao.getPending().isNotEmpty()
+    override suspend fun unsyncedCount(): Int = dao.countUnsynced()
 
     override fun requestSync() = syncRequester.requestSync()
 

@@ -61,7 +61,6 @@ import app.menosan.android.feature.reports.typeLabel
 @Composable
 private fun RecommendationBadges(rec: RecommendationDto) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        // Neutral facts about the idea. Sand ("pending") is kept for things that need attention.
         val tag = MenosanTheme.colors.mist
         val onTag = MaterialTheme.colorScheme.onSurface
         if (rec.continued) {
@@ -71,7 +70,6 @@ private fun RecommendationBadges(rec: RecommendationDto) {
     }
 }
 
-/** One idea inside a hotspot card, on an inset panel so several ideas read as separate options. */
 @Composable
 fun RecommendationItem(
     rec: RecommendationDto,
@@ -234,11 +232,10 @@ private fun InfoBlock(title: String, body: String, background: Color, content: C
 @Composable
 fun ImpactCard(impact: ImpactDto, targetLabel: String) {
     val (label, body, icon) = when (impact.result) {
-        Trend.DECREASED -> Triple(R.string.report_impact_decreased, R.string.report_impact_decreased_body, Icons.AutoMirrored.Filled.TrendingDown)
-        Trend.INCREASED -> Triple(R.string.report_impact_increased, R.string.report_impact_increased_body, Icons.AutoMirrored.Filled.TrendingUp)
-        Trend.SAME, Trend.UNKNOWN -> Triple(R.string.report_impact_same, R.string.report_impact_same_body, Icons.AutoMirrored.Filled.TrendingFlat)
+        Trend.DECREASED -> Triple(R.string.impact_decreased, R.string.report_impact_decreased_body, Icons.AutoMirrored.Filled.TrendingDown)
+        Trend.INCREASED -> Triple(R.string.impact_increased, R.string.report_impact_increased_body, Icons.AutoMirrored.Filled.TrendingUp)
+        Trend.SAME, Trend.UNKNOWN -> Triple(R.string.impact_same, R.string.report_impact_same_body, Icons.AutoMirrored.Filled.TrendingFlat)
     }
-    // An increase stays neutral, as on Home: Sand ("pending") is kept for things that need attention.
     val (pillColor, onPill) = when (impact.result) {
         Trend.DECREASED -> MenosanTheme.colors.calm to MenosanTheme.colors.onCalm
         else -> MenosanTheme.colors.mist to MaterialTheme.colorScheme.onSurface
@@ -253,7 +250,7 @@ fun ImpactCard(impact: ImpactDto, targetLabel: String) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
                 stringResource(
-                    R.string.report_impact_quantities,
+                    R.string.quantity_change,
                     quantityText(impact.baselineQuantity, impact.unit),
                     quantityText(impact.followupQuantity, impact.unit),
                 ),

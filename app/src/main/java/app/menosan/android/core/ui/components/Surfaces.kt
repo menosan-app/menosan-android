@@ -26,7 +26,6 @@ import app.menosan.android.core.ui.theme.MenosanTheme
 
 val SectionGap = 24.dp
 
-/** Shadow under every card, so cards stand out from the page background. */
 val CardElevation = 3.dp
 
 @Composable

@@ -17,7 +17,6 @@ object EntryFormats {
     private val time = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
     private val weekday = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.ENGLISH)
 
-    /** Same style as report weeks ("Sep 6 – 12", "Sep 27 – Oct 3"), so one screen never shows both. */
     fun weekRange(weekStart: LocalDate): String = formatWeekRange(weekStart, WeekCalc.weekEnd(weekStart))
 
     fun date(instant: Instant): String = fullDate.format(instant.atZone(WeekCalc.ZONE))

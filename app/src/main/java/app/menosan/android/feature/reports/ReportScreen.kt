@@ -118,7 +118,6 @@ fun ReportScreen(onBack: () -> Unit, viewModel: ReportViewModel = hiltViewModel(
     }
 }
 
-/** What the tabs share: the open tab, which hotspots show their ideas, and the actions between them. */
 private class ReportTabActions(
     val tab: ReportTab,
     val expandedHotspots: List<String>,
@@ -141,7 +140,6 @@ fun ReportContent(
 ) {
     var details by remember { mutableStateOf<String?>(null) }
     var tab by rememberSaveable { mutableStateOf(initialTab) }
-    // Subcategory codes of the hotspots whose ideas are open (a list, so it saves in a Bundle).
     var expandedHotspots by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -150,7 +148,6 @@ fun ReportContent(
         scope.launch { listState.scrollToItem(0) }
     }
     val topHotspot = state.view?.report?.hotspots?.minByOrNull { it.rank }?.subcategory
-    // Coming from Insights "See ideas": open the top hotspot's ideas once the report has loaded.
     var openedTopIdeas by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(openTopIdeas, topHotspot) {
         if (openTopIdeas && !openedTopIdeas && topHotspot != null) {
@@ -250,7 +247,6 @@ private fun LazyListScope.overviewTab(state: ReportUiState, view: ReportView, ac
 
 private fun LazyListScope.hotspotsTab(state: ReportUiState, view: ReportView, actions: ReportTabActions) {
     val hotspots = view.report.hotspots.sortedBy { it.rank }
-    // Ideas come from the server, so an offline summary has hotspots but no ideas yet.
     if (view.isProvisional) {
         item(key = "hotspots-offline") { MessageBanner(stringResource(R.string.report_offline_banner), icon = Icons.Outlined.CloudOff) }
     }
@@ -258,7 +254,6 @@ private fun LazyListScope.hotspotsTab(state: ReportUiState, view: ReportView, ac
         item(key = "special-only") { MessageBanner(stringResource(R.string.report_hotspots_special_only)) }
         return
     }
-    // A past report is a record: it shows only what was adopted from it, not the ideas left untried.
     val ideasFor: (HotspotDto) -> List<RecommendationDto> = { hotspot ->
         when {
             view.isProvisional -> emptyList()
@@ -334,7 +329,7 @@ private fun LazyListScope.progressTab(state: ReportUiState, view: ReportView) {
         }
     } else {
         item(key = "impact-title") {
-            SectionTitle(stringResource(R.string.report_impact_title), subtitle = stringResource(R.string.report_impact_subtitle))
+            SectionTitle(stringResource(R.string.impact_title), subtitle = stringResource(R.string.report_impact_subtitle))
         }
         items(report.impacts, key = { "impact-${it.interventionId}" }) { ImpactCard(it, state.label(it.targetSubcategory)) }
     }
@@ -378,7 +373,6 @@ private fun WeekHeader(view: ReportView) {
 
 @Composable
 private fun ReportTabs(selected: ReportTab, onSelect: (ReportTab) -> Unit) {
-    // Opaque background so cards don't show through while the tabs stick to the top.
     Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(vertical = 4.dp)) {
         Row(
             Modifier
@@ -455,7 +449,6 @@ private fun MetricTile(value: String, label: String, modifier: Modifier = Modifi
     }
 }
 
-/** One line on how the week compares: pieces when any were logged, otherwise food grams. */
 @Composable
 private fun DeltaLine(comparison: ComparisonDto) {
     val usePieces = comparison.pieces.previous > 0 || comparison.pieces.current > 0
@@ -475,7 +468,7 @@ private fun DeltaLine(comparison: ComparisonDto) {
         }
     }
     val unit = if (usePieces) QuantityUnit.PIECES else QuantityUnit.GRAMS
-    val range = stringResource(R.string.report_comparison_total, quantityText(row.previous, unit), quantityText(row.current, unit))
+    val range = stringResource(R.string.quantity_change, quantityText(row.previous, unit), quantityText(row.current, unit))
     val (icon, _) = trendIcon(row.trend)
     val (background, content) = when (row.trend) {
         Trend.DECREASED -> MenosanTheme.colors.calm to MenosanTheme.colors.onCalm
@@ -657,10 +650,6 @@ private fun trendIcon(trend: Trend): Pair<ImageVector, Color> = when (trend) {
     Trend.SAME, Trend.UNKNOWN -> Icons.AutoMirrored.Filled.TrendingFlat to MaterialTheme.colorScheme.onSurfaceVariant
 }
 
-/**
- * A hotspot with its ideas (or, on a past report, the ones adopted) folded under a dropdown button.
- * They show only when the user opens them, so the tab reads as a short ranked list first.
- */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun HotspotCard(
@@ -697,7 +686,6 @@ private fun HotspotCard(
                     )
                 }
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    // Neutral facts, like the idea badges. Sand ("pending") is kept for things that need attention.
                     hotspot.criteria.mapNotNull { criterionLabel(it) }.forEach { Pill(it, MenosanTheme.colors.mist, MaterialTheme.colorScheme.onSurface) }
                 }
             }
@@ -715,7 +703,6 @@ private fun HotspotCard(
     }
 }
 
-/** The subcategory's picture on a mist tile, with the rank in the top-left corner. */
 @Composable
 private fun HotspotIcon(hotspot: HotspotDto) {
     val rankDescription = stringResource(R.string.report_hotspot_rank, hotspot.rank)

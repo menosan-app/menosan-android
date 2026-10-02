@@ -50,7 +50,6 @@ interface NetworkStatus {
     fun isOnline(): Boolean
     val online: Flow<Boolean>
 
-    /** A request failed with a network error: ask Android to re-check the connection. */
     fun reportUnreachable()
 }
 

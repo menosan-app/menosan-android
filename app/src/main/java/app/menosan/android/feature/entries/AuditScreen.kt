@@ -66,7 +66,6 @@ import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.feature.logging.icon
 import app.menosan.android.feature.logging.labelRes
 
-/** How many of this week's newest entries the Audit tab shows before "View all". */
 private const val PREVIEW_ENTRIES = 5
 
 @Composable
@@ -225,7 +224,7 @@ private fun WeekCard(summary: WeekSummary) {
             )
             Column(Modifier.padding(bottom = 8.dp)) {
                 Text(
-                    pluralStringResource(R.plurals.audit_entries_word, summary.entries),
+                    pluralStringResource(R.plurals.count_entries_word, summary.entries),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 MetaText(piecesAndGramsText(summary.pieces, summary.grams))

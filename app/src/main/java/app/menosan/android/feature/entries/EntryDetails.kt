@@ -231,7 +231,11 @@ private fun Details(state: EntryDetailsUiState.Loaded, onEdit: () -> Unit, onDel
         }
 
         if (entry.syncStatus == EntrySyncStatus.FAILED && entry.lastError != null) {
-            MessageBanner(title = stringResource(R.string.details_sync_error_title), text = entry.lastError, tone = BannerTone.Error)
+            MessageBanner(
+                title = stringResource(R.string.details_sync_error_title),
+                text = stringResource(R.string.details_sync_error_body),
+                tone = BannerTone.Error,
+            )
         }
 
         if (entry.editable) {
@@ -258,7 +262,7 @@ private fun Details(state: EntryDetailsUiState.Loaded, onEdit: () -> Unit, onDel
                     ),
                     modifier = Modifier.weight(1f).heightIn(min = 52.dp),
                 ) {
-                    Text(stringResource(R.string.details_delete), style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.action_delete), style = MaterialTheme.typography.titleMedium)
                 }
             }
         } else {

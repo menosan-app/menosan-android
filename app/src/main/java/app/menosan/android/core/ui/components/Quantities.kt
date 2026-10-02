@@ -13,7 +13,7 @@ import java.util.Locale
 @Composable
 @ReadOnlyComposable
 fun quantityText(quantity: Int, unit: QuantityUnit): String = when (unit) {
-    QuantityUnit.PIECES -> pluralStringResource(R.plurals.audit_pieces, quantity, quantity)
+    QuantityUnit.PIECES -> pluralStringResource(R.plurals.count_pieces, quantity, quantity)
     QuantityUnit.GRAMS -> gramsText(quantity)
 }
 

@@ -72,7 +72,6 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier, subtitle: String?
     }
 }
 
-/** A full-width mist bar that opens or closes the content under it, with a chevron that turns. */
 @Composable
 fun ExpandToggle(text: String, expanded: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val rotation by animateFloatAsState(if (expanded) 180f else 0f, label = "chevron")
@@ -138,7 +137,7 @@ fun PatientLoading(title: String, modifier: Modifier = Modifier) {
         CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 3.dp)
         if (slow) {
             Text(
-                stringResource(R.string.reports_server_waking),
+                stringResource(R.string.server_waking),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -175,7 +174,7 @@ fun ProblemWithRetry(problem: ReportProblem, onRetry: () -> Unit, modifier: Modi
     Column(modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         MessageBanner(text = problemText(problem), tone = BannerTone.Error)
         OutlinedButton(onClick = onRetry, border = secondaryButtonBorder(), modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(stringResource(R.string.reports_retry))
+            Text(stringResource(R.string.action_try_again))
         }
     }
 }

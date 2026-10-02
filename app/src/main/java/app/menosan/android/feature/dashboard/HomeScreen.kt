@@ -144,8 +144,8 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions, onDeleteEntry: (String)
             Section(
                 stringResource(
                     when {
-                        report.isProvisional -> R.string.dashboard_report_offline
-                        report.isLastWeek -> R.string.dashboard_report_ready
+                        report.isProvisional -> R.string.reports_offline_summary
+                        report.isLastWeek -> R.string.dashboard_report_last_week
                         else -> R.string.dashboard_report_latest
                     },
                 ),
@@ -344,7 +344,7 @@ private fun WeekCard(state: HomeUiState) {
             )
             Column(Modifier.padding(bottom = 8.dp)) {
                 Text(
-                    pluralStringResource(R.plurals.dashboard_entries_word, summary.entries),
+                    pluralStringResource(R.plurals.count_entries_word, summary.entries),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 MetaText(piecesAndGramsText(summary.pieces, summary.grams))
@@ -427,8 +427,8 @@ private fun WasteMix(state: HomeUiState) {
                             Text(labels[i], style = MaterialTheme.typography.bodyMedium, maxLines = 1)
                             MetaText(
                                 stringResource(
-                                    R.string.dashboard_entries_and_pieces,
-                                    pluralStringResource(R.plurals.dashboard_entries, share.entries, share.entries),
+                                    R.string.count_joined,
+                                    pluralStringResource(R.plurals.count_entries, share.entries, share.entries),
                                     piecesAndGramsText(share.pieces, share.grams),
                                 ),
                                 maxLines = 1,
@@ -474,7 +474,7 @@ private fun FirstReportCard() {
 private fun ReportCard(report: LatestReportCard, state: HomeUiState, actions: HomeActions) {
     QuietCard(
         onClick = { actions.onOpenReport(report.weekStart) },
-        onClickLabel = stringResource(R.string.dashboard_report_open),
+        onClickLabel = stringResource(R.string.action_open_report),
         spacing = 16.dp,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -485,8 +485,8 @@ private fun ReportCard(report: LatestReportCard, state: HomeUiState, actions: Ho
                 )
                 MetaText(
                     stringResource(
-                        R.string.dashboard_entries_and_pieces,
-                        pluralStringResource(R.plurals.dashboard_entries, report.analyzedEntries, report.analyzedEntries),
+                        R.string.count_joined,
+                        pluralStringResource(R.plurals.count_entries, report.analyzedEntries, report.analyzedEntries),
                         piecesAndGramsText(report.analyzedPieces, report.analyzedGrams),
                     ),
                 )
@@ -513,8 +513,8 @@ private fun ReportCard(report: LatestReportCard, state: HomeUiState, actions: Ho
                     )
                     MetaText(
                         stringResource(
-                            R.string.dashboard_entries_and_pieces,
-                            pluralStringResource(R.plurals.dashboard_entries, hotspot.frequency, hotspot.frequency),
+                            R.string.count_joined,
+                            pluralStringResource(R.plurals.count_entries, hotspot.frequency, hotspot.frequency),
                             quantityText(hotspot.quantity, hotspot.unit),
                         ),
                     )
@@ -536,7 +536,7 @@ private fun ReportCard(report: LatestReportCard, state: HomeUiState, actions: Ho
         }
 
         if (report.impacts.isNotEmpty()) {
-            Detail(stringResource(R.string.dashboard_impact_title)) {
+            Detail(stringResource(R.string.impact_title)) {
                 report.impacts.forEach { ImpactLine(it, state) }
             }
         }
@@ -559,9 +559,9 @@ private fun ImpactLine(impact: ImpactDto, state: HomeUiState) {
         else -> Icons.AutoMirrored.Filled.TrendingFlat to MaterialTheme.colorScheme.onSurfaceVariant
     }
     val result = when (impact.result) {
-        Trend.DECREASED -> R.string.dashboard_impact_decreased
-        Trend.SAME -> R.string.dashboard_impact_same
-        Trend.INCREASED -> R.string.dashboard_impact_increased
+        Trend.DECREASED -> R.string.impact_decreased
+        Trend.SAME -> R.string.impact_same
+        Trend.INCREASED -> R.string.impact_increased
         Trend.UNKNOWN -> null
     }
     Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -570,7 +570,7 @@ private fun ImpactLine(impact: ImpactDto, state: HomeUiState) {
             Text(impact.title, style = MaterialTheme.typography.bodyMedium)
             MetaText(
                 "${state.labelOf(impact.targetSubcategory)} · " + stringResource(
-                    R.string.dashboard_impact_quantities,
+                    R.string.quantity_change,
                     quantityText(impact.baselineQuantity, impact.unit),
                     quantityText(impact.followupQuantity, impact.unit),
                 ),

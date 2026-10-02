@@ -3,13 +3,35 @@
     <string name="brand_wordmark" translatable="false">menosan</string>
     <string name="brand_tagline">Less Waste, Better Habits</string>
 
+    <string name="action_cancel">Cancel</string>
+    <string name="action_try_again">Try again</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_open_report">Open report</string>
+    <plurals name="count_entries">
+        <item quantity="one">%d entry</item>
+        <item quantity="other">%d entries</item>
+    </plurals>
+    <plurals name="count_entries_word">
+        <item quantity="one">entry</item>
+        <item quantity="other">entries</item>
+    </plurals>
+    <plurals name="count_pieces">
+        <item quantity="one">%d pc</item>
+        <item quantity="other">%d pcs</item>
+    </plurals>
+    <string name="count_joined">%1$s · %2$s</string>
+    <string name="quantity_change">%1$s → %2$s</string>
+    <string name="impact_title">How your changes went</string>
+    <string name="impact_decreased">Decreased</string>
+    <string name="impact_same">No change</string>
+    <string name="impact_increased">Increased</string>
+    <string name="server_waking">The server is waking up. This can take up to a minute.</string>
     <string name="action_back">Back</string>
     <string name="connection_offline_toast">You\'re offline. Keep logging. Your entries will sync when you\'re back online.</string>
     <string name="connection_online_toast">You\'re back online. Your entries will sync now.</string>
     <string name="error_offline">Can\'t reach Menosan right now. Check your internet connection and try again.</string>
-    <string name="error_server">Something went wrong on our side. Please try again in a moment.</string>
+    <string name="error_server">Something went wrong on our side. Try again in a moment.</string>
     <string name="error_request_id">Reference: %1$s</string>
-    <string name="placeholder_coming_soon">This screen is coming soon (%1$s).</string>
 
     <string name="tab_home">Home</string>
     <string name="tab_audit">Audit</string>
@@ -20,9 +42,9 @@
     <string name="add_entry_title">Add an entry</string>
     <string name="add_entry_subtitle">Choose how to log your waste.</string>
     <string name="add_entry_photo">Scan a photo</string>
-    <string name="add_entry_photo_body">Take a photo or choose one from your gallery.</string>
+    <string name="add_entry_photo_body">Take or choose a photo.</string>
     <string name="add_entry_manual">Log manually</string>
-    <string name="add_entry_manual_body">Type in the details yourself.</string>
+    <string name="add_entry_manual_body">Type in the details.</string>
 
     <string name="welcome_title">A cleaner home starts with small steps</string>
     <string name="welcome_body">Log your household\'s waste, see where most of it comes from, and get simple ideas to cut it down.</string>
@@ -35,20 +57,19 @@
     <string name="sign_in_continue_with_google">Continue with Google</string>
     <string name="sign_in_signing_in">Logging you in…</string>
     <string name="sign_in_checking_account">Checking your account…</string>
-    <string name="sign_in_waking_server">The server is waking up. This can take up to a minute.</string>
     <string name="sign_in_needs_internet">Logging in needs internet. After that, you can log waste offline too.</string>
     <string name="sign_in_error_title">Couldn\'t log you in</string>
     <string name="sign_in_error_no_account">No Google account was found on this phone. Add one in your phone\'s settings, then try again.</string>
     <string name="sign_in_error_play_services">Google sign-in needs the latest Google Play services. Update it from the Play Store, then try again.</string>
-    <string name="sign_in_error_generic">Google sign-in didn\'t finish. Please try again.</string>
-    <string name="sign_in_error_firebase">We couldn\'t log you in. Check your internet connection and try again.</string>
-    <string name="sign_in_error_expired">Your session expired. Please log in again.</string>
+    <string name="sign_in_error_generic">Google sign-in didn\'t finish. Try again.</string>
+    <string name="sign_in_error_firebase">Check your internet connection and try again.</string>
+    <string name="sign_in_error_expired">Your session expired. Log in again.</string>
 
     <string name="create_account_title">Create your account</string>
-    <string name="create_account_subtitle">You\'ll use your Google account to sign up.</string>
+    <string name="create_account_subtitle">You\'ll create it with your Google account.</string>
     <string name="create_account_signed_in_as">Continuing as %1$s</string>
     <string name="create_account_consent">I\'ve read the privacy notice and agree to Menosan storing my data as it describes.</string>
-    <string name="create_account_consent_hint">Please tick the box above to continue.</string>
+    <string name="create_account_consent_hint">Tick the box above to continue.</string>
     <string name="create_account_button">Create my account</string>
     <string name="create_account_have_account">Already have an account?</string>
     <string name="create_account_use_different">Use a different Google account</string>
@@ -57,22 +78,22 @@
     <string name="create_account_creating_body">Getting Menosan ready for you.</string>
 
     <string name="privacy_title">Your privacy</string>
-    <string name="privacy_short_private">Your data is private. No rankings and no comparisons with other households.</string>
-    <string name="privacy_short_photos">Photos are only used to fill in entry details. They\'re never stored.</string>
+    <string name="privacy_short_private">Your data is private. No rankings, leaderboards, or comparisons with other households.</string>
+    <string name="privacy_short_photos">Photos are only used to suggest details for an entry. They\'re never stored.</string>
     <string name="privacy_short_control">Export or delete all your data anytime.</string>
     <string name="privacy_read_full">Read the full privacy notice</string>
     <string name="privacy_what_we_store">• We store your Google email and name, the waste you log (name, category, quantity, and time), your weekly reports, and the ideas you choose to try.</string>
     <string name="privacy_photos">• Photos are only used to suggest details for an entry. They\'re never stored.</string>
     <string name="privacy_ai">• Photos and your weekly waste totals are processed by Google\'s Gemini AI to suggest entry details and pick ideas for you. Your email and name are never sent.</string>
-    <string name="privacy_nothing_public">• Nothing is public. There are no rankings and no comparisons with other households.</string>
+    <string name="privacy_nothing_public">• Your data is private. No rankings, leaderboards, or comparisons with other households.</string>
     <string name="privacy_your_control">• You can export or delete all your data at any time in Profile.</string>
 
-    <string name="ready_label">READY</string>
+    <string name="ready_label">Ready</string>
     <string name="ready_title">You\'re in!</string>
     <string name="ready_title_name">You\'re in, %1$s!</string>
     <string name="ready_body">Let\'s get started on a cleaner, greener Dumaguete. Here\'s what you can do next:</string>
     <string name="ready_log_title">Log your waste</string>
-    <string name="ready_log_body">By photo or by hand</string>
+    <string name="ready_log_body">Scan a photo or log manually</string>
     <string name="ready_dashboard_title">Track your week</string>
     <string name="ready_dashboard_body">Your entries, in Audit</string>
     <string name="ready_insights_title">Get ideas</string>

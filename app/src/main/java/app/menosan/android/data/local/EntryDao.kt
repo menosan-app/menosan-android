@@ -20,8 +20,11 @@ interface EntryDao {
     @Query("SELECT * FROM entries WHERE sync_state != 'SYNCED' ORDER BY created_at")
     suspend fun getPending(): List<EntryEntity>
 
-    @Query("SELECT COUNT(*) FROM entries WHERE sync_state != 'SYNCED'")
+    @Query("SELECT COUNT(*) FROM entries WHERE sync_state != 'SYNCED' AND last_error IS NULL")
     fun observePendingCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM entries WHERE sync_state != 'SYNCED'")
+    suspend fun countUnsynced(): Int
 
     @Query("SELECT * FROM entries WHERE sync_state != 'SYNCED' AND last_error IS NULL ORDER BY created_at")
     suspend fun getOutbox(): List<EntryEntity>

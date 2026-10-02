@@ -35,7 +35,7 @@ sealed interface ProfileDialog {
 
     data object ConfirmExport : ProfileDialog
 
-    data class LogoutWarning(val pendingCount: Int) : ProfileDialog
+    data class LogoutWarning(val unsyncedCount: Int, val canSync: Boolean = true) : ProfileDialog
 
     data class DeleteAccount(
         val typed: String = "",
@@ -147,9 +147,10 @@ class ProfileViewModel @Inject constructor(
     fun logOut() {
         if (local.value.loggingOut) return
         viewModelScope.launch {
-            if (entries.hasPendingChanges()) {
-                val pending = entries.observePendingCount().first()
-                local.update { it.copy(dialog = ProfileDialog.LogoutWarning(pending.coerceAtLeast(1))) }
+            val unsynced = entries.unsyncedCount()
+            if (unsynced > 0) {
+                val waiting = entries.observePendingCount().first()
+                local.update { it.copy(dialog = ProfileDialog.LogoutWarning(unsynced, canSync = waiting > 0)) }
             } else {
                 endSession()
             }

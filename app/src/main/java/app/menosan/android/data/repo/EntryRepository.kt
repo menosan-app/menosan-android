@@ -26,7 +26,7 @@ interface EntryRepository {
 
     fun observePendingCount(): Flow<Int>
 
-    suspend fun hasPendingChanges(): Boolean
+    suspend fun unsyncedCount(): Int
 
     fun requestSync()
 

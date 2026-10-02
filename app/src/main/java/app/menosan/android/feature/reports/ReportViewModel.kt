@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import app.menosan.android.core.network.ApiError
 import app.menosan.android.data.repo.AdoptionResult
 import app.menosan.android.data.repo.RefreshResult
 import app.menosan.android.data.repo.ReportRepository
@@ -43,7 +42,6 @@ enum class ReportMessage { Adopted, Unadopted, WindowClosed, Offline, Failed }
 
 enum class ReportTab { OVERVIEW, HOTSPOTS, PROGRESS }
 
-/** `ReportRoute.tab` value that opens the Hotspots tab with the top hotspot's ideas expanded. */
 const val REPORT_ROUTE_IDEAS = "IDEAS"
 
 @HiltViewModel
@@ -55,10 +53,8 @@ class ReportViewModel @Inject constructor(
     private val route: ReportRoute? = runCatching { savedStateHandle.toRoute<ReportRoute>() }.getOrNull()
     private val weekStart: LocalDate? = runCatching { LocalDate.parse(route?.weekStart) }.getOrNull()
 
-    /** True when coming from the Insights "Focus this week" card: open on the top hotspot's ideas. */
     val openTopIdeas: Boolean = route?.tab == REPORT_ROUTE_IDEAS
 
-    /** The tab the report opens on. */
     val initialTab: ReportTab =
         if (openTopIdeas) ReportTab.HOTSPOTS else ReportTab.entries.firstOrNull { it.name == route?.tab } ?: ReportTab.OVERVIEW
 
@@ -109,7 +105,7 @@ class ReportViewModel @Inject constructor(
                 AdoptionResult.WindowClosed -> ReportMessage.WindowClosed
                 AdoptionResult.NotAvailable -> ReportMessage.Failed
                 is AdoptionResult.Failure ->
-                    if (result.error is ApiError.Network) ReportMessage.Offline else ReportMessage.Failed
+                    if (result.error.toProblem() == ReportProblem.Offline) ReportMessage.Offline else ReportMessage.Failed
             }
             messageChannel.send(message)
         }

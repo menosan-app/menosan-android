@@ -60,10 +60,8 @@ import app.menosan.android.data.remote.dto.Trend
 import app.menosan.android.data.remote.dto.WeeklyStatsDto
 import kotlin.math.roundToInt
 
-/** Subcategory rows a category card shows before "Show more". */
 private const val COLLAPSED_ROWS = 2
 
-/** A tab heading in the app's section style, with a short muted line under it. */
 @Composable
 fun TabHeading(title: String, subtitle: String?) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -84,7 +82,6 @@ fun ProgressHeading(comparison: ComparisonDto?) {
     )
 }
 
-/** Week totals side by side: pieces, and food weight when food was logged in either week. */
 @Composable
 fun ProgressTotals(comparison: ComparisonDto) {
     val hasPieces = comparison.pieces.previous > 0 || comparison.pieces.current > 0
@@ -122,10 +119,9 @@ private fun TotalTile(icon: ImageVector, label: String, row: ComparisonRowDto, u
                 Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            // Shrinks rather than wraps, so "1.7 kg → 1.7 kg" stays on one line in a half-width tile.
             val valueStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             Text(
-                stringResource(R.string.report_comparison_total, totalText(row.previous, unit), totalText(row.current, unit)),
+                stringResource(R.string.quantity_change, totalText(row.previous, unit), totalText(row.current, unit)),
                 style = valueStyle,
                 maxLines = 1,
                 autoSize = TextAutoSize.StepBased(minFontSize = 14.sp, maxFontSize = valueStyle.fontSize),
@@ -136,14 +132,12 @@ private fun TotalTile(icon: ImageVector, label: String, row: ComparisonRowDto, u
     }
 }
 
-/** Big numbers in the tiles: plain piece counts ("34 → 29"), weights with their unit. */
 @Composable
 private fun totalText(value: Int, unit: QuantityUnit): String = when (unit) {
     QuantityUnit.PIECES -> value.toString()
     QuantityUnit.GRAMS -> gramsText(value)
 }
 
-/** "5 fewer pieces", "38 g more", or "No change". */
 @Composable
 private fun changeText(delta: Int, unit: QuantityUnit): String {
     val amount = absInt(delta)
@@ -156,7 +150,6 @@ private fun changeText(delta: Int, unit: QuantityUnit): String {
     }
 }
 
-/** An arrow and the size of the change: green going down, orange going up, grey when the same. */
 @Composable
 fun TrendChange(trend: Trend, deltaPct: Double?, current: Int, modifier: Modifier = Modifier) {
     val (icon, color) = trendArrow(trend)
@@ -180,13 +173,12 @@ private fun trendArrow(trend: Trend): Pair<ImageVector, Color> = when (trend) {
 
 @Composable
 private fun trendDescription(trend: Trend): String? = when (trend) {
-    Trend.DECREASED -> stringResource(R.string.report_impact_decreased)
-    Trend.INCREASED -> stringResource(R.string.report_impact_increased)
-    Trend.SAME -> stringResource(R.string.report_impact_same)
+    Trend.DECREASED -> stringResource(R.string.impact_decreased)
+    Trend.INCREASED -> stringResource(R.string.impact_increased)
+    Trend.SAME -> stringResource(R.string.impact_same)
     Trend.UNKNOWN -> null
 }
 
-/** One card per main category that has data in either week, in taxonomy order. */
 data class CategoryProgress(
     val category: WasteCategory,
     val sharePct: Double,
@@ -259,7 +251,6 @@ fun CategoryProgressCard(progress: CategoryProgress, state: ReportUiState) {
     }
 }
 
-/** This week's share of entries for one category, as a ring with the percentage inside. */
 @Composable
 private fun ShareDonut(sharePct: Double, color: Color) {
     val share = (sharePct / 100.0).toFloat().coerceIn(0f, 1f)
@@ -289,7 +280,7 @@ private fun SubcategoryProgressRow(sub: SubcategoryComparisonDto, color: Color, 
         Column(Modifier.weight(1f)) {
             Text(state.label(sub.code), style = MaterialTheme.typography.bodyMedium, maxLines = 2)
             Text(
-                stringResource(R.string.report_comparison_total, quantityText(sub.previous, sub.unit), quantityText(sub.current, sub.unit)),
+                stringResource(R.string.quantity_change, quantityText(sub.previous, sub.unit), quantityText(sub.current, sub.unit)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -299,7 +290,6 @@ private fun SubcategoryProgressRow(sub: SubcategoryComparisonDto, color: Color, 
     }
 }
 
-/** Last week (faded) next to this week (solid), scaled to the larger of the two. */
 @Composable
 private fun MiniBars(previous: Int, current: Int, color: Color) {
     val faded = color.copy(alpha = 0.35f)

@@ -249,7 +249,7 @@ fun LogEntryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
                 ) {
-                    Text(stringResource(R.string.log_cancel), color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)
                 }
             }
         }

@@ -274,7 +274,7 @@ fun PhotoAnalyzingScreen(wakingUp: Boolean, onCancel: () -> Unit) {
                 .navigationBarsPadding()
                 .padding(bottom = 24.dp),
         ) {
-            Text(stringResource(R.string.photo_cancel), style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.action_cancel), style = MaterialTheme.typography.titleSmall)
         }
     }
 }
@@ -334,14 +334,14 @@ fun PhotoErrorScreen(
         ) {
             when {
                 canRetry -> {
-                    PrimaryButton(stringResource(R.string.photo_try_again), onClick = onRetry)
+                    PrimaryButton(stringResource(R.string.action_try_again), onClick = onRetry)
                     if (onCropAgain != null) SecondaryButton(stringResource(R.string.photo_crop_again), onClick = onCropAgain)
                     SecondaryButton(stringResource(R.string.photo_try_another), onClick = onAnotherPhoto)
                     SecondaryButton(stringResource(R.string.photo_log_manually), onClick = onLogManually)
                 }
                 error.kind == PhotoErrorKind.RATE_LIMITED -> {
                     PrimaryButton(stringResource(R.string.photo_log_manually), onClick = onLogManually)
-                    SecondaryButton(stringResource(R.string.photo_back), onClick = onBack)
+                    SecondaryButton(stringResource(R.string.action_back), onClick = onBack)
                 }
                 onCropAgain != null && error.kind == PhotoErrorKind.NOT_WASTE -> {
                     PrimaryButton(stringResource(R.string.photo_crop_again), onClick = onCropAgain)
@@ -440,7 +440,7 @@ fun PhotoReviewScreen(
                     CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
                 } else {
                     Text(
-                        stringResource(R.string.photo_review_save),
+                        stringResource(R.string.log_save),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     )
                 }

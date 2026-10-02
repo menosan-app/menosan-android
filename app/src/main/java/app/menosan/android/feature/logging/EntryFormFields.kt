@@ -301,7 +301,6 @@ private fun CategoryTile(
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                // "Biodegradable" shrinks to fit a quarter-width tile instead of being cut off.
                 autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.labelMedium.fontSize),
             )
         }

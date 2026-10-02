@@ -72,7 +72,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
-/** The top hotspot of the latest report, while its ideas can still be adopted. */
 data class InsightsFocus(val weekStart: LocalDate, val hotspot: HotspotDto, val label: String)
 
 data class InsightsUiState(
@@ -220,7 +219,7 @@ private fun Section(
 @Composable
 private fun reportStats(report: ReportListItem): String {
     val base = stringResource(
-        R.string.insights_report_stats,
+        R.string.count_joined,
         piecesAndGramsText(report.analyzedPieces, report.analyzedGrams),
         pluralStringResource(R.plurals.reports_hotspots, report.hotspotCount, report.hotspotCount),
     )
@@ -229,7 +228,7 @@ private fun reportStats(report: ReportListItem): String {
 
 @Composable
 private fun LatestReportCard(report: ReportListItem, onClick: () -> Unit) {
-    QuietCard(onClick = onClick, onClickLabel = stringResource(R.string.insights_open_report), spacing = 16.dp) {
+    QuietCard(onClick = onClick, onClickLabel = stringResource(R.string.action_open_report), spacing = 16.dp) {
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
                 report.analyzedEntries.toString(),
@@ -238,7 +237,7 @@ private fun LatestReportCard(report: ReportListItem, onClick: () -> Unit) {
             )
             Column(Modifier.weight(1f).padding(bottom = 8.dp)) {
                 Text(
-                    pluralStringResource(R.plurals.dashboard_entries_word, report.analyzedEntries),
+                    pluralStringResource(R.plurals.count_entries_word, report.analyzedEntries),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
                 MetaText(piecesAndGramsText(report.analyzedPieces, report.analyzedGrams))

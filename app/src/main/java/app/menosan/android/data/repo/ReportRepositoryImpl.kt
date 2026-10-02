@@ -60,14 +60,18 @@ class DefaultReportRepository @Inject constructor(
             }
         }
         val toFetch = mutex.withLock { syncList(list) }
+        var failure: RefreshResult.Failure? = null
         for (week in toFetch) {
             val result = fetchReport(week)
-            if (result is RefreshResult.Failure && result.error.isUnreachable) {
-                generateOfflineReports()
-                break
+            if (result is RefreshResult.Failure) {
+                if (failure == null) failure = result
+                if (result.error.isUnreachable) {
+                    generateOfflineReports()
+                    break
+                }
             }
         }
-        return RefreshResult.Success
+        return failure ?: RefreshResult.Success
     }
 
     override suspend fun refreshReport(weekStart: LocalDate): RefreshResult {
@@ -178,8 +182,10 @@ class DefaultReportRepository @Inject constructor(
         cacheDao.upsert(updated.toCacheEntity(row.fetchedAt))
     }
 
-    private fun canAdopt(report: ReportDto): Boolean =
-        report.isLatest && report.weekStart == WeekCalc.latestReportWeekStart(clock)
+    private fun canAdopt(report: ReportDto): Boolean = isLatest(report.weekStart, report.isLatest)
+
+    private fun isLatest(weekStart: LocalDate, serverIsLatest: Boolean): Boolean =
+        weekStart == WeekCalc.latestReportWeekStart(clock) && serverIsLatest
 
     private fun ReportCacheEntity.toListItem() = ReportListItem(
         weekStart = weekStart,
@@ -189,7 +195,7 @@ class DefaultReportRepository @Inject constructor(
         analyzedGrams = analyzedGrams,
         hotspotCount = hotspotCount,
         adoptedCount = adoptedCount,
-        isLatest = weekStart == WeekCalc.latestReportWeekStart(clock),
+        isLatest = isLatest(weekStart, isLatest),
         isProvisional = isProvisional,
         hasDetails = payloadJson != null,
     )

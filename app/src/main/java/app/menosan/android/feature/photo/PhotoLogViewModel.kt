@@ -183,20 +183,20 @@ class PhotoLogViewModel @Inject constructor(
         }
         val draft = step.review.toDraft(step.taxonomy)
         if (draft == null) {
-            updateReview { it.copy(showErrors = true, saveError = R.string.photo_review_error_invalid) }
+            updateReview { it.copy(showErrors = true, saveError = R.string.log_error_invalid) }
             return
         }
         updateReview { it.copy(saving = true, saveError = null) }
         viewModelScope.launch {
             try {
                 repository.create(draft)
-                events.send(PhotoEvent.Saved(if (_state.value.online) R.string.photo_saved else R.string.photo_saved_offline))
+                events.send(PhotoEvent.Saved(if (_state.value.online) R.string.photo_saved else R.string.log_saved_offline))
             } catch (e: CancellationException) {
                 throw e
             } catch (_: EntryChangeException.Invalid) {
-                updateReview { it.copy(showErrors = true, saveError = R.string.photo_review_error_invalid) }
+                updateReview { it.copy(showErrors = true, saveError = R.string.log_error_invalid) }
             } catch (_: Exception) {
-                updateReview { it.copy(saveError = R.string.photo_review_error_save) }
+                updateReview { it.copy(saveError = R.string.log_error_generic) }
             } finally {
                 updateReview { it.copy(saving = false) }
             }
@@ -244,7 +244,6 @@ class PhotoLogViewModel @Inject constructor(
     }
 
     private suspend fun upload(jpeg: ByteArray) {
-        // The connection can drop after the photo was picked (e.g. while cropping): don't send it.
         if (!network.isOnline()) {
             fail(PhotoError(PhotoErrorKind.NETWORK))
             return

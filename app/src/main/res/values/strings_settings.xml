@@ -14,7 +14,7 @@
     <string name="profile_done">Done</string>
 
     <string name="profile_data_privacy">Data &amp; privacy</string>
-    <string name="profile_privacy_statement">Your waste data is private to you. It\'s never used for public rankings, leaderboards, or comparisons with other households.</string>
+    <string name="profile_privacy_statement">Your waste data is private to you. No rankings, leaderboards, or comparisons with other households.</string>
     <string name="profile_privacy_notice">Read the privacy notice</string>
     <string name="profile_export">Export my data</string>
     <string name="profile_exporting">Exporting your data…</string>
@@ -23,11 +23,10 @@
     <string name="profile_export_title">Export your data?</string>
     <string name="profile_export_body">Save a file on this phone with all your entries, weekly reports, hotspots, and the ideas you tried. This needs internet.</string>
     <string name="profile_export_confirm">Export</string>
-    <string name="profile_cancel">Cancel</string>
     <string name="profile_export_done">Your data was saved.</string>
-    <string name="profile_export_offline">Exporting needs internet. Please connect and try again.</string>
-    <string name="profile_export_server">We couldn\'t get your data right now. Please try again in a moment.</string>
-    <string name="profile_export_write_failed">We couldn\'t save the file there. Please try another folder.</string>
+    <string name="profile_export_offline">Exporting needs internet. Connect and try again.</string>
+    <string name="profile_export_server">Couldn\'t get your data right now. Try again in a moment.</string>
+    <string name="profile_export_write_failed">Couldn\'t save the file there. Try another folder.</string>
 
     <string name="profile_log_out">Log out</string>
     <string name="profile_logging_out">Logging out…</string>
@@ -40,20 +39,20 @@
         <item quantity="one">%d entry is only saved on this phone. If you log out now, it will be lost.</item>
         <item quantity="other">%d entries are only saved on this phone. If you log out now, they will be lost.</item>
     </plurals>
+    <string name="profile_logout_fix_hint">Menosan couldn\'t save them. To try again, edit them in Audit.</string>
     <string name="profile_logout_sync_first">Try to sync first</string>
     <string name="profile_logout_anyway">Log out anyway</string>
     <string name="profile_logout_syncing">Syncing your entries. Try logging out again in a moment.</string>
-    <string name="profile_logout_sync_offline">Your entries will sync once you\'re online. Connect, then try again.</string>
-    <string name="profile_logout_failed">Logging out didn\'t finish. Please try again.</string>
+    <string name="profile_logout_sync_offline">Your entries will sync when you\'re back online. Connect, then try again.</string>
+    <string name="profile_logout_failed">Logging out didn\'t finish. Try again.</string>
     <string name="profile_logged_out">You\'re logged out. See you soon!</string>
 
     <string name="profile_delete_title">Delete your account &amp; data?</string>
     <string name="profile_delete_body">This permanently deletes your Menosan account, entries, reports, and the ideas you tried. It can\'t be undone. If you\'d like a copy, export your data first.</string>
     <string name="profile_delete_type_label">Type DELETE to confirm</string>
-    <string name="profile_delete_confirm">Delete</string>
     <string name="profile_deleting">Deleting…</string>
-    <string name="profile_delete_offline">Deleting your account needs internet. Please connect and try again.</string>
-    <string name="profile_delete_server">We couldn\'t finish deleting your account. Please try again.</string>
+    <string name="profile_delete_offline">Deleting your account needs internet. Connect and try again.</string>
+    <string name="profile_delete_server">Couldn\'t finish deleting your account. Try again.</string>
     <string name="profile_delete_sign_in">Your session expired. Log out, log in again, then try once more.</string>
     <string name="profile_account_deleted">Your account and data were deleted. Thank you for trying Menosan.</string>
 </resources>

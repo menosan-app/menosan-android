@@ -2,8 +2,7 @@
 <resources>
     <string name="insights_title">Insights</string>
     <string name="insights_subtitle">See your waste, find a hotspot, and try a small change.</string>
-    <string name="insights_latest_label">Latest report</string>
-    <string name="insights_open_report">Open report</string>
+    <string name="insights_latest_label">Your latest report</string>
     <plurals name="insights_hotspots_found">
         <item quantity="one">%d hotspot found</item>
         <item quantity="other">%d hotspots found</item>
@@ -19,7 +18,6 @@
     <string name="insights_empty_hint">Weeks run Sunday to Saturday. Keep logging, and your report will be ready on Sunday.</string>
     <string name="insights_loading">Loading your reports…</string>
     <string name="insights_showing_saved">Showing your saved reports. Connect to the internet to update them.</string>
-    <string name="insights_report_stats">%1$s · %2$s</string>
     <plurals name="insights_adopted">
         <item quantity="one">%d idea tried</item>
         <item quantity="other">%d ideas tried</item>
@@ -27,23 +25,10 @@
 
     <string name="reports_offline_summary">Offline summary</string>
     <string name="reports_latest">Latest</string>
-    <string name="reports_retry">Try again</string>
-    <string name="reports_server_waking">The server is waking up. This can take up to a minute.</string>
-    <string name="reports_error_offline">Can\'t reach Menosan right now. Check your internet connection and try again.</string>
-    <string name="reports_error_server">Something went wrong on our side. Please try again in a moment.</string>
-    <plurals name="reports_entries">
-        <item quantity="one">%d entry</item>
-        <item quantity="other">%d entries</item>
-    </plurals>
-    <plurals name="reports_pieces">
-        <item quantity="one">%d pc</item>
-        <item quantity="other">%d pcs</item>
-    </plurals>
     <plurals name="reports_hotspots">
         <item quantity="one">%d hotspot</item>
         <item quantity="other">%d hotspots</item>
     </plurals>
-    <string name="reports_entries_and_pieces">%1$s · %2$s</string>
     <string name="reports_week_range_year">%1$s, %2$d</string>
 
     <string name="report_loading">Loading your report…</string>
@@ -112,7 +97,6 @@
     <string name="report_breakdown_empty">Nothing in the analyzed categories this week.</string>
     <string name="report_special_line">Special waste: %1$s. Logged, but not counted in this report.</string>
     <string name="report_comparison_none">No comparison this time. Nothing was logged the week before.</string>
-    <string name="report_comparison_total">%1$s → %2$s</string>
     <plurals name="report_comparison_fewer">
         <item quantity="one">%d fewer piece than the week before</item>
         <item quantity="other">%d fewer pieces than the week before</item>
@@ -155,19 +139,14 @@
     <string name="report_adopt_done">Added. Give it a try this week!</string>
     <string name="report_unadopt_done">Removed. You can pick another idea anytime this week.</string>
     <string name="report_adopt_window_closed">You can only pick ideas from your latest report. Your next report will bring new ones.</string>
-    <string name="report_adopt_offline">Picking an idea needs internet. Please try again when you\'re online.</string>
-    <string name="report_adopt_failed">Couldn\'t save that just now. Please try again.</string>
+    <string name="report_adopt_offline">Couldn\'t reach Menosan, so this wasn\'t saved. Check your internet connection and try again.</string>
+    <string name="report_adopt_failed">Couldn\'t save that just now. Try again.</string>
 
-    <string name="report_impact_title">How your changes went</string>
     <string name="report_impact_subtitle">The ideas you picked last week, and what you logged this week.</string>
     <string name="report_impact_target">For %1$s</string>
-    <string name="report_impact_quantities">%1$s → %2$s</string>
-    <string name="report_impact_decreased">Decreased</string>
-    <string name="report_impact_same">Same</string>
-    <string name="report_impact_increased">Increased</string>
-    <string name="report_impact_decreased_body">Nice work — this is helping. Keep it up!</string>
+    <string name="report_impact_decreased_body">Nice work. This is helping, so keep it up!</string>
     <string name="report_impact_same_body">About the same. Small steps still count, so keep going.</string>
-    <string name="report_impact_increased_body">That\'s okay — try a smaller step this week.</string>
+    <string name="report_impact_increased_body">That\'s okay. Try a smaller step this week.</string>
 
     <string name="report_recap_title">Last week\'s report (%1$s)</string>
     <string name="report_recap_hotspots">Hotspots: %1$s</string>

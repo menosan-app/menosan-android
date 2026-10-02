@@ -39,46 +39,33 @@
     <string name="log_offline_banner">You\'re offline. This entry will sync when you\'re back online.</string>
     <string name="log_save">Save entry</string>
     <string name="log_save_changes">Save changes</string>
-    <string name="log_cancel">Cancel</string>
     <string name="log_saved">Entry saved. Nice work keeping track!</string>
     <string name="log_saved_offline">Saved on this phone. It\'ll sync when you\'re back online.</string>
     <string name="log_saved_edit">Changes saved.</string>
-    <string name="log_error_not_found">We couldn\'t find this entry. It may have been deleted.</string>
+    <string name="log_error_not_found">Couldn\'t find this entry. It may have been deleted.</string>
     <string name="log_error_week_closed">This entry is from a past week, so it can\'t be changed anymore.</string>
-    <string name="log_error_invalid">Please check the highlighted fields.</string>
-    <string name="log_error_generic">Something went wrong while saving. Please try again.</string>
+    <string name="log_error_invalid">Check the highlighted fields.</string>
+    <string name="log_error_generic">Couldn\'t save this entry. Try again.</string>
 
     <string name="audit_title">Audit</string>
     <string name="audit_subtitle">Track your waste, build better habits.</string>
     <string name="audit_this_week">This week</string>
-    <plurals name="audit_entries">
-        <item quantity="one">%d entry</item>
-        <item quantity="other">%d entries</item>
-    </plurals>
-    <plurals name="audit_pieces">
-        <item quantity="one">%d pc</item>
-        <item quantity="other">%d pcs</item>
-    </plurals>
     <string name="quantity_grams">%1$s g</string>
     <string name="quantity_kilograms">%1$s kg</string>
-    <plurals name="audit_entries_word">
-        <item quantity="one">entry</item>
-        <item quantity="other">entries</item>
-    </plurals>
     <string name="audit_log_manual">Log manually</string>
-    <string name="audit_log_manual_body">Type it in</string>
+    <string name="audit_log_manual_body">Type in the details</string>
     <string name="audit_scan">Scan a photo</string>
-    <string name="audit_scan_body">Snap or upload</string>
+    <string name="audit_scan_body">Take or choose a photo</string>
     <string name="audit_entries_title">This week\'s entries</string>
     <string name="audit_empty_title">Nothing logged yet this week</string>
     <string name="audit_empty_body">Your entries will show up here once you log them. Every entry helps you spot small changes.</string>
     <string name="audit_pending_title">Entries waiting to sync</string>
     <plurals name="audit_pending_body">
-        <item quantity="one">%d change is saved on this phone and will sync when you\'re online.</item>
-        <item quantity="other">%d changes are saved on this phone and will sync when you\'re online.</item>
+        <item quantity="one">%d entry is saved on this phone and will sync when you\'re back online.</item>
+        <item quantity="other">%d entries are saved on this phone and will sync when you\'re back online.</item>
     </plurals>
     <string name="audit_failed_title">Some entries couldn\'t sync</string>
-    <string name="audit_failed_body">Open an entry to see why. Editing it tries to sync it again.</string>
+    <string name="audit_failed_body">Menosan couldn\'t save them. Editing an entry sends it again.</string>
     <string name="audit_reverted_title">A change couldn\'t be saved</string>
     <plurals name="audit_reverted_body">
         <item quantity="one">%d change was for a week that had already closed, so we kept the saved version.</item>
@@ -97,15 +84,13 @@
     <string name="entry_menu_details">View details</string>
     <string name="entry_menu_edit">Edit entry</string>
     <string name="entry_menu_delete">Delete entry</string>
-    <string name="entry_row_meta">%1$s • %2$s</string>
+    <string name="entry_row_meta">%1$s · %2$s</string>
 
     <string name="delete_title">Delete this entry?</string>
     <string name="delete_body">This removes the entry from Audit. It can\'t be undone.</string>
-    <string name="delete_confirm">Delete</string>
-    <string name="delete_cancel">Cancel</string>
     <string name="delete_done">Entry deleted.</string>
     <string name="delete_week_closed">This entry is from a past week, so it can\'t be deleted.</string>
-    <string name="delete_failed">Couldn\'t delete this entry. Please try again.</string>
+    <string name="delete_failed">Couldn\'t delete this entry. Try again.</string>
 
     <string name="details_title">Entry details</string>
     <string name="details_item_name">Item name</string>
@@ -121,7 +106,7 @@
     <string name="details_read_only_title">From a past week</string>
     <string name="details_read_only_body">Past weeks are read-only, so this entry stays as it is.</string>
     <string name="details_sync_error_title">This entry couldn\'t sync</string>
+    <string name="details_sync_error_body">Menosan couldn\'t save it. Edit the entry to send it again.</string>
     <string name="details_edit">Edit</string>
-    <string name="details_delete">Delete</string>
     <string name="details_not_found">This entry isn\'t here anymore.</string>
 </resources>

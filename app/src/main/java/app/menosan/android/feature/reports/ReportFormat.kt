@@ -22,6 +22,7 @@ import app.menosan.android.data.remote.dto.CostLevel
 import app.menosan.android.data.remote.dto.Effort
 import app.menosan.android.data.remote.dto.HotspotCriterion
 import app.menosan.android.data.remote.dto.InterventionType
+import app.menosan.android.data.repo.isUnreachable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -40,23 +41,22 @@ fun weekRangeWithYear(start: LocalDate, end: LocalDate): String =
 
 @Composable
 @ReadOnlyComposable
-fun entriesText(count: Int): String = pluralStringResource(R.plurals.reports_entries, count, count)
+fun entriesText(count: Int): String = pluralStringResource(R.plurals.count_entries, count, count)
 
 @Composable
 @ReadOnlyComposable
-fun piecesText(count: Int): String = pluralStringResource(R.plurals.reports_pieces, count, count)
+fun piecesText(count: Int): String = pluralStringResource(R.plurals.count_pieces, count, count)
 
 @Composable
 @ReadOnlyComposable
 fun entriesAndPieces(entries: Int, pieces: Int): String =
-    stringResource(R.string.reports_entries_and_pieces, entriesText(entries), piecesText(pieces))
+    stringResource(R.string.count_joined, entriesText(entries), piecesText(pieces))
 
 @Composable
 @ReadOnlyComposable
 fun entriesAndQuantity(entries: Int, quantity: Int, unit: QuantityUnit): String =
-    stringResource(R.string.reports_entries_and_pieces, entriesText(entries), quantityText(quantity, unit))
+    stringResource(R.string.count_joined, entriesText(entries), quantityText(quantity, unit))
 
-/** An unsigned change like "14.7%" or "0%"; the trend arrow next to it shows the direction. */
 fun percentText(value: Double): String =
     String.format(Locale.ENGLISH, "%.1f", abs(value)).removeSuffix(".0") + "%"
 
@@ -71,7 +71,6 @@ fun categoryColor(category: WasteCategory): Color = when (category) {
     WasteCategory.SPECIAL -> MenosanTheme.colors.special
 }
 
-/** A picture for each subcategory code (taxonomy codes are stable, plan §3). */
 fun subcategoryIcon(code: String): ImageVector = when (code) {
     "BIO_FOOD_LEFTOVERS" -> WasteIcons.Leftovers
     "BIO_SPOILED_FOOD" -> WasteIcons.SpoiledFood
@@ -131,11 +130,11 @@ fun effortLabel(effort: Effort): String? = when (effort) {
 
 enum class ReportProblem { Offline, Server }
 
-fun ApiError.toProblem(): ReportProblem = if (this is ApiError.Network) ReportProblem.Offline else ReportProblem.Server
+fun ApiError.toProblem(): ReportProblem = if (isUnreachable) ReportProblem.Offline else ReportProblem.Server
 
 @Composable
 @ReadOnlyComposable
 fun problemText(problem: ReportProblem): String = when (problem) {
-    ReportProblem.Offline -> stringResource(R.string.reports_error_offline)
-    ReportProblem.Server -> stringResource(R.string.reports_error_server)
+    ReportProblem.Offline -> stringResource(R.string.error_offline)
+    ReportProblem.Server -> stringResource(R.string.error_server)
 }

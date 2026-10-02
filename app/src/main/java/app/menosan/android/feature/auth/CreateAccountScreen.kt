@@ -100,7 +100,7 @@ fun CreateAccountContent(
             BrandLoading(
                 title = stringResource(R.string.create_account_creating_title),
                 subtitle = stringResource(
-                    if (state.slowServer) R.string.sign_in_waking_server else R.string.create_account_creating_body,
+                    if (state.slowServer) R.string.server_waking else R.string.create_account_creating_body,
                 ),
                 modifier = Modifier.safeDrawingPadding(),
             )
