@@ -15,13 +15,13 @@
     <string name="dashboard_entries_and_pieces">%1$s · %2$s</string>
     <string name="dashboard_bars_description">Entries per day this week: %1$s</string>
     <string name="dashboard_log_manual">Log waste</string>
-    <string name="dashboard_log_photo">With photo</string>
+    <string name="dashboard_log_photo">Scan photo</string>
 
     <string name="dashboard_next_log_title">Log today\'s waste</string>
     <string name="dashboard_next_log_body">Threw something out today? Logging it takes a few seconds.</string>
     <plurals name="dashboard_next_keep_title">
-        <item quantity="one">You logged %d item today</item>
-        <item quantity="other">You logged %d items today</item>
+        <item quantity="one">You\'ve logged %d entry today</item>
+        <item quantity="other">You\'ve logged %d entries today</item>
     </plurals>
     <string name="dashboard_next_keep_body">Nice work. Add anything else you throw out today.</string>
     <string name="dashboard_next_idea_title">Pick an idea to try this week</string>
@@ -31,14 +31,14 @@
         <item quantity="one">%d entry couldn\'t sync</item>
         <item quantity="other">%d entries couldn\'t sync</item>
     </plurals>
-    <string name="dashboard_next_fix_body">Take a quick look in Audit. Editing an entry tries again.</string>
+    <string name="dashboard_next_fix_body">Have a quick look in Audit. Editing an entry tries to sync it again.</string>
     <string name="dashboard_next_fix_action">Review in Audit</string>
 
     <string name="dashboard_mix_percent">%1$d%%</string>
     <string name="dashboard_mix_description">Share of this week\'s entries: %1$s</string>
     <plurals name="dashboard_mix_special">
-        <item quantity="one">Plus %d special waste entry, logged but not included.</item>
-        <item quantity="other">Plus %d special waste entries, logged but not included.</item>
+        <item quantity="one">Plus %d special waste entry. It\'s logged but not counted in reports.</item>
+        <item quantity="other">Plus %d special waste entries. They\'re logged but not counted in reports.</item>
     </plurals>
 
     <plurals name="dashboard_pending_short">

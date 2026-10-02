@@ -48,6 +48,7 @@ import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.EntrySyncStatus
 import app.menosan.android.core.model.WasteCategory
 import app.menosan.android.core.ui.components.Pill
+import app.menosan.android.core.ui.components.secondaryButtonBorder
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.feature.logging.icon
 
@@ -191,7 +192,12 @@ fun DeleteEntryDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         text = { Text(stringResource(R.string.delete_body), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
         confirmButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(onClick = onDismiss, shape = MaterialTheme.shapes.small, modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    shape = MaterialTheme.shapes.small,
+                    border = secondaryButtonBorder(),
+                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+                ) {
                     Text(stringResource(R.string.delete_cancel), color = MaterialTheme.colorScheme.onSurface)
                 }
                 Button(

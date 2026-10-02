@@ -1,6 +1,5 @@
 package app.menosan.android.feature.auth
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.menosan.android.R
+import app.menosan.android.core.ui.components.primaryButtonColors
+import app.menosan.android.core.ui.components.secondaryButtonBorder
 import app.menosan.android.core.ui.theme.MenosanTheme
 
 @Composable
@@ -82,10 +83,7 @@ fun WelcomeScreen(
                 .fillMaxWidth()
                 .heightIn(min = 52.dp),
             shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            ),
+            colors = primaryButtonColors(),
         ) {
             Text(stringResource(R.string.welcome_create_account), style = MaterialTheme.typography.titleMedium)
         }
@@ -95,7 +93,7 @@ fun WelcomeScreen(
                 .fillMaxWidth()
                 .heightIn(min = 52.dp),
             shape = MaterialTheme.shapes.small,
-            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
+            border = secondaryButtonBorder(),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         ) {
             Text(stringResource(R.string.welcome_log_in), style = MaterialTheme.typography.titleMedium)

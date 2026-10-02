@@ -8,7 +8,9 @@ import app.menosan.android.navigation.ReportRoute
 
 fun NavGraphBuilder.reportsScreens(navController: NavHostController) {
     composable<HistoryRoute> {
-        InsightsScreen(onOpenReport = { week, tab -> navController.navigate(ReportRoute(week.toString(), tab?.name)) })
+        InsightsScreen(onOpenReport = { week, openIdeas ->
+            navController.navigate(ReportRoute(week.toString(), if (openIdeas) REPORT_ROUTE_IDEAS else null))
+        })
     }
     composable<ReportRoute> {
         ReportScreen(onBack = { navController.popBackStack() })

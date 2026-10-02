@@ -24,11 +24,11 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.menosan.android.R
 import app.menosan.android.core.ui.components.quantityText
@@ -70,45 +71,51 @@ private fun RecommendationBadges(rec: RecommendationDto) {
     }
 }
 
+/** One idea inside a hotspot card, on an inset panel so several ideas read as separate options. */
 @Composable
-fun RecommendationCard(
+fun RecommendationItem(
     rec: RecommendationDto,
     canAdopt: Boolean,
     pending: Boolean,
     notMeasured: Boolean,
     onToggleAdopt: () -> Unit,
     onOpenDetails: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    ReportCard {
-        Text(rec.title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-        Text(rec.description, style = MaterialTheme.typography.bodyMedium, maxLines = 3)
-        RecommendationBadges(rec)
-        rec.note?.let {
-            Text(it, style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        if (rec.adopted) {
-            Pill(
-                stringResource(if (canAdopt) R.string.report_trying_this else R.string.report_tried_this),
-                MenosanTheme.colors.calm,
-                MenosanTheme.colors.onCalm,
-                icon = Icons.Filled.Check,
-            )
-            if (notMeasured) {
-                Text(
-                    stringResource(R.string.report_not_measured),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.background) {
+        Column(
+            Modifier.padding(start = 14.dp, end = 14.dp, top = 14.dp, bottom = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(rec.title, style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+            Text(rec.description, style = MaterialTheme.typography.bodyMedium, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            RecommendationBadges(rec)
+            rec.note?.let {
+                Text(it, style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            if (rec.adopted) {
+                Pill(
+                    stringResource(if (canAdopt) R.string.report_trying_this else R.string.report_tried_this),
+                    MenosanTheme.colors.calm,
+                    MenosanTheme.colors.onCalm,
+                    icon = Icons.Filled.Check,
                 )
+                if (notMeasured) {
+                    Text(
+                        stringResource(R.string.report_not_measured),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
-        }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onOpenDetails) {
-                Text(stringResource(R.string.report_view_details))
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = onOpenDetails) {
+                    Text(stringResource(R.string.report_view_details))
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+                }
+                Spacer(Modifier.weight(1f))
+                if (canAdopt) AdoptButton(adopted = rec.adopted, pending = pending, onClick = onToggleAdopt)
             }
-            Spacer(Modifier.weight(1f))
-            if (canAdopt) AdoptButton(adopted = rec.adopted, pending = pending, onClick = onToggleAdopt)
         }
     }
 }
@@ -231,9 +238,9 @@ fun ImpactCard(impact: ImpactDto, targetLabel: String) {
         Trend.INCREASED -> Triple(R.string.report_impact_increased, R.string.report_impact_increased_body, Icons.AutoMirrored.Filled.TrendingUp)
         Trend.SAME, Trend.UNKNOWN -> Triple(R.string.report_impact_same, R.string.report_impact_same_body, Icons.AutoMirrored.Filled.TrendingFlat)
     }
+    // An increase stays neutral, as on Home: Sand ("pending") is kept for things that need attention.
     val (pillColor, onPill) = when (impact.result) {
         Trend.DECREASED -> MenosanTheme.colors.calm to MenosanTheme.colors.onCalm
-        Trend.INCREASED -> MenosanTheme.colors.pending to MenosanTheme.colors.onPending
         else -> MenosanTheme.colors.mist to MaterialTheme.colorScheme.onSurface
     }
     ReportCard {

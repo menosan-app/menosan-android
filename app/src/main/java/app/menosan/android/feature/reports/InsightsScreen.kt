@@ -122,14 +122,14 @@ internal fun focusOf(latest: ReportListItem?, view: ReportView?, labels: Map<Str
 }
 
 @Composable
-fun InsightsScreen(onOpenReport: (LocalDate, ReportTab?) -> Unit, viewModel: InsightsViewModel = hiltViewModel()) {
+fun InsightsScreen(onOpenReport: (LocalDate, openIdeas: Boolean) -> Unit, viewModel: InsightsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     InsightsContent(state = state, onRefresh = viewModel::refresh, onOpenReport = onOpenReport)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport: (LocalDate, ReportTab?) -> Unit) {
+fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport: (LocalDate, openIdeas: Boolean) -> Unit) {
     PullToRefreshBox(
         isRefreshing = state.refreshing && state.reports.isNotEmpty(),
         onRefresh = onRefresh,
@@ -178,12 +178,12 @@ fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport:
                         Section(
                             stringResource(R.string.insights_latest_label),
                             trailing = { MetaText(weekRangeWithYear(latest.weekStart, latest.weekEnd)) },
-                        ) { LatestReportCard(latest, onClick = { onOpenReport(latest.weekStart, null) }) }
+                        ) { LatestReportCard(latest, onClick = { onOpenReport(latest.weekStart, false) }) }
                     }
                     state.focus?.let { focus ->
                         item(key = "focus") {
                             Section(stringResource(R.string.insights_focus_title)) {
-                                FocusCard(focus, onSeeIdeas = { onOpenReport(focus.weekStart, ReportTab.IDEAS) })
+                                FocusCard(focus, onSeeIdeas = { onOpenReport(focus.weekStart, true) })
                             }
                         }
                     }
@@ -194,7 +194,7 @@ fun InsightsContent(state: InsightsUiState, onRefresh: () -> Unit, onOpenReport:
                                 trailing = { MetaText(stringResource(R.string.insights_past_private)) },
                             ) {
                                 GroupedList(reports.drop(1), dividerInset = 72.dp) { report ->
-                                    ReportRow(report, onClick = { onOpenReport(report.weekStart, null) })
+                                    ReportRow(report, onClick = { onOpenReport(report.weekStart, false) })
                                 }
                             }
                         }

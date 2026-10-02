@@ -1,6 +1,5 @@
 package app.menosan.android.feature.entries
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,10 +50,10 @@ import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.EntrySource
 import app.menosan.android.core.model.EntrySyncStatus
 import app.menosan.android.core.ui.components.BannerTone
-import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.MessageBanner
+import app.menosan.android.core.ui.components.QuietCard
 import app.menosan.android.core.ui.components.ScreenHeader
-import app.menosan.android.core.ui.theme.MenosanTheme
+import app.menosan.android.core.ui.components.secondaryButtonBorder
 import app.menosan.android.data.repo.EntryRepository
 import app.menosan.android.data.repo.TaxonomyRepository
 import app.menosan.android.feature.logging.labelRes
@@ -201,37 +199,34 @@ private fun Details(state: EntryDetailsUiState.Loaded, onEdit: () -> Unit, onDel
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Surface(
-            color = MenosanTheme.colors.card,
-            shape = MaterialTheme.shapes.medium,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-            shadowElevation = CardElevation,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    CategoryBadge(entry.category)
-                    Column {
-                        Text(state.subcategoryLabel, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
-                        Text(
-                            stringResource(entry.category.labelRes()),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+        QuietCard {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                CategoryBadge(entry.category)
+                Column {
+                    Text(state.subcategoryLabel, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
+                    Text(
+                        stringResource(entry.category.labelRes()),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
-                DetailRow(stringResource(R.string.details_item_name), entry.name)
-                DetailRow(stringResource(R.string.details_quantity), quantityText(entry.quantity, entry.unit))
-                DetailRow(stringResource(R.string.details_date), EntryFormats.date(entry.createdAt))
-                DetailRow(stringResource(R.string.details_time), EntryFormats.time(entry.createdAt))
-                DetailRow(
-                    stringResource(R.string.details_method),
-                    stringResource(if (entry.source == EntrySource.PHOTO) R.string.details_method_photo else R.string.details_method_manual),
+            }
+            DetailRow(stringResource(R.string.details_item_name), entry.name)
+            DetailRow(stringResource(R.string.details_quantity), quantityText(entry.quantity, entry.unit))
+            DetailRow(stringResource(R.string.details_date), EntryFormats.date(entry.createdAt))
+            DetailRow(stringResource(R.string.details_time), EntryFormats.time(entry.createdAt))
+            DetailRow(
+                stringResource(R.string.details_method),
+                stringResource(if (entry.source == EntrySource.PHOTO) R.string.details_method_photo else R.string.details_method_manual),
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.details_sync),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.details_sync), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    SyncChip(entry.syncStatus)
-                }
+                SyncChip(entry.syncStatus)
             }
         }
 
@@ -249,7 +244,7 @@ private fun Details(state: EntryDetailsUiState.Loaded, onEdit: () -> Unit, onDel
                 OutlinedButton(
                     onClick = onEdit,
                     shape = MaterialTheme.shapes.small,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    border = secondaryButtonBorder(),
                     modifier = Modifier.weight(1f).heightIn(min = 52.dp),
                 ) {
                     Text(stringResource(R.string.details_edit), color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)

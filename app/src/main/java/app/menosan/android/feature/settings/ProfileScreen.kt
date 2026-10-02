@@ -26,7 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.FileUpload
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.Person
@@ -78,6 +78,7 @@ import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.settings.ThemeMode
 import app.menosan.android.core.ui.components.CardElevation
 import app.menosan.android.core.ui.components.Pill
+import app.menosan.android.core.ui.components.secondaryButtonBorder
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.feature.auth.PrivacyNotice
 
@@ -177,7 +178,7 @@ fun ProfileScreen(
             onClick = onLogOut,
             enabled = !state.loggingOut,
             shape = MaterialTheme.shapes.small,
-            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
+            border = secondaryButtonBorder(),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).padding(top = 4.dp),
         ) {
@@ -301,7 +302,7 @@ private fun ProfileDialogs(state: ProfileUiState, viewModel: ProfileViewModel) {
         ProfileDialog.Appearance -> AppearanceSheet(state.themeMode, viewModel::setThemeMode, viewModel::dismissDialog)
         ProfileDialog.PrivacyNotice -> PrivacySheet(viewModel::dismissDialog)
         ProfileDialog.ConfirmExport -> ConfirmDialog(
-            icon = Icons.Outlined.FileUpload,
+            icon = Icons.Outlined.FileDownload,
             title = stringResource(R.string.profile_export_title),
             body = stringResource(R.string.profile_export_body),
             confirm = stringResource(R.string.profile_export_confirm),
@@ -525,6 +526,7 @@ private fun DialogButtons(
             onClick = onCancel,
             enabled = cancelEnabled,
             shape = MaterialTheme.shapes.small,
+            border = secondaryButtonBorder(),
             modifier = Modifier.weight(1f).heightIn(min = 48.dp),
         ) {
             Text(cancel, color = MaterialTheme.colorScheme.onSurface, textAlign = TextAlign.Center)

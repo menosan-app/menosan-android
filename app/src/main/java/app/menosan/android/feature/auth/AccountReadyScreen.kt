@@ -21,7 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.BarChart
-import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -113,7 +113,7 @@ fun AccountReadyContent(firstName: String?, onGetStarted: () -> Unit) = BoxWithC
                 .padding(vertical = 16.dp, horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            ReadyFeature(Icons.Outlined.Home, R.string.ready_log_title, R.string.ready_log_body, Modifier.weight(1f))
+            ReadyFeature(Icons.Outlined.EditNote, R.string.ready_log_title, R.string.ready_log_body, Modifier.weight(1f))
             ReadyFeature(Icons.AutoMirrored.Outlined.ReceiptLong, R.string.ready_dashboard_title, R.string.ready_dashboard_body, Modifier.weight(1f))
             ReadyFeature(Icons.Outlined.BarChart, R.string.ready_insights_title, R.string.ready_insights_body, Modifier.weight(1f))
         }

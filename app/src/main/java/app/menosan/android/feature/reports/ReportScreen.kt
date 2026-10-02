@@ -1,11 +1,14 @@
 package app.menosan.android.feature.reports
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +22,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -31,10 +33,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Lightbulb
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +45,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -61,6 +59,8 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -71,14 +71,11 @@ import app.menosan.android.core.ui.components.screenInsetsPadding
 import app.menosan.android.core.analytics.QuantityUnit
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.Pill
-import app.menosan.android.core.ui.components.primaryButtonColors
 import app.menosan.android.core.ui.components.gramsText
 import app.menosan.android.core.ui.components.quantityText
 import app.menosan.android.core.ui.components.ScreenHeader
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.data.remote.dto.ComparisonDto
-import app.menosan.android.data.remote.dto.ComparisonRowDto
-import app.menosan.android.data.remote.dto.HotspotCriterion
 import app.menosan.android.data.remote.dto.HotspotDto
 import app.menosan.android.data.remote.dto.RecommendationDto
 import app.menosan.android.data.remote.dto.Trend
@@ -87,7 +84,7 @@ import app.menosan.android.data.repo.LastWeekRecap
 import app.menosan.android.data.repo.ReportView
 import app.menosan.android.feature.interventions.AdoptButton
 import app.menosan.android.feature.interventions.ImpactCard
-import app.menosan.android.feature.interventions.RecommendationCard
+import app.menosan.android.feature.interventions.RecommendationItem
 import app.menosan.android.feature.interventions.RecommendationDetailsSheet
 import kotlinx.coroutines.launch
 
@@ -112,6 +109,7 @@ fun ReportScreen(onBack: () -> Unit, viewModel: ReportViewModel = hiltViewModel(
         ReportContent(
             state = state,
             initialTab = viewModel.initialTab,
+            openTopIdeas = viewModel.openTopIdeas,
             onBack = onBack,
             onRefresh = viewModel::refresh,
             onSetAdopted = viewModel::setAdopted,
@@ -120,13 +118,13 @@ fun ReportScreen(onBack: () -> Unit, viewModel: ReportViewModel = hiltViewModel(
     }
 }
 
-/** What the tabs share: the open tab, the hotspot picked for ideas, and the actions between them. */
+/** What the tabs share: the open tab, which hotspots show their ideas, and the actions between them. */
 private class ReportTabActions(
     val tab: ReportTab,
-    val selectedHotspot: Int,
+    val expandedHotspots: List<String>,
     val onSelectTab: (ReportTab) -> Unit,
-    val onShowIdeasFor: (hotspotIndex: Int) -> Unit,
-    val onSelectHotspot: (Int) -> Unit,
+    val onToggleHotspot: (subcategory: String) -> Unit,
+    val onShowTopIdeas: () -> Unit,
     val onSetAdopted: (String, Boolean) -> Unit,
     val onOpenDetails: (String) -> Unit,
 )
@@ -139,25 +137,38 @@ fun ReportContent(
     onRefresh: () -> Unit,
     onSetAdopted: (interventionId: String, adopted: Boolean) -> Unit,
     initialTab: ReportTab = ReportTab.OVERVIEW,
+    openTopIdeas: Boolean = false,
 ) {
     var details by remember { mutableStateOf<String?>(null) }
     var tab by rememberSaveable { mutableStateOf(initialTab) }
-    var selectedHotspot by rememberSaveable { mutableIntStateOf(0) }
+    // Subcategory codes of the hotspots whose ideas are open (a list, so it saves in a Bundle).
+    var expandedHotspots by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val selectTab: (ReportTab) -> Unit = { next ->
         tab = next
         scope.launch { listState.scrollToItem(0) }
     }
+    val topHotspot = state.view?.report?.hotspots?.minByOrNull { it.rank }?.subcategory
+    // Coming from Insights "See ideas": open the top hotspot's ideas once the report has loaded.
+    var openedTopIdeas by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(openTopIdeas, topHotspot) {
+        if (openTopIdeas && !openedTopIdeas && topHotspot != null) {
+            openedTopIdeas = true
+            if (topHotspot !in expandedHotspots) expandedHotspots = expandedHotspots + topHotspot
+        }
+    }
     val actions = ReportTabActions(
         tab = tab,
-        selectedHotspot = selectedHotspot,
+        expandedHotspots = expandedHotspots,
         onSelectTab = selectTab,
-        onShowIdeasFor = { index ->
-            selectedHotspot = index
-            selectTab(ReportTab.IDEAS)
+        onToggleHotspot = { code ->
+            expandedHotspots = if (code in expandedHotspots) expandedHotspots - code else expandedHotspots + code
         },
-        onSelectHotspot = { selectedHotspot = it },
+        onShowTopIdeas = {
+            if (topHotspot != null && topHotspot !in expandedHotspots) expandedHotspots = expandedHotspots + topHotspot
+            selectTab(ReportTab.HOTSPOTS)
+        },
         onSetAdopted = onSetAdopted,
         onOpenDetails = { details = it },
     )
@@ -207,7 +218,6 @@ private fun LazyListScope.reportSections(state: ReportUiState, view: ReportView,
     when (actions.tab) {
         ReportTab.OVERVIEW -> overviewTab(state, view, actions)
         ReportTab.HOTSPOTS -> hotspotsTab(state, view, actions)
-        ReportTab.IDEAS -> ideasTab(state, view, actions)
         ReportTab.PROGRESS -> progressTab(state, view)
     }
 }
@@ -231,7 +241,7 @@ private fun LazyListScope.overviewTab(state: ReportUiState, view: ReportView, ac
                 pending = topIdea.interventionId in state.pendingAdoptions,
                 onToggleAdopt = { actions.onSetAdopted(topIdea.interventionId, !topIdea.adopted) },
                 onOpenDetails = { actions.onOpenDetails(topIdea.interventionId) },
-                onSeeAll = { actions.onShowIdeasFor(0) },
+                onSeeAll = actions.onShowTopIdeas,
             )
         }
     }
@@ -240,46 +250,55 @@ private fun LazyListScope.overviewTab(state: ReportUiState, view: ReportView, ac
 
 private fun LazyListScope.hotspotsTab(state: ReportUiState, view: ReportView, actions: ReportTabActions) {
     val hotspots = view.report.hotspots.sortedBy { it.rank }
+    // Ideas come from the server, so an offline summary has hotspots but no ideas yet.
+    if (view.isProvisional) {
+        item(key = "hotspots-offline") { MessageBanner(stringResource(R.string.report_offline_banner), icon = Icons.Outlined.CloudOff) }
+    }
     if (hotspots.isEmpty()) {
         item(key = "special-only") { MessageBanner(stringResource(R.string.report_hotspots_special_only)) }
         return
     }
-    item(key = "hotspots-intro") { TabIntro(stringResource(R.string.report_hotspots_intro)) }
-    val showIdeas = view.canAdopt && !view.isProvisional
-    hotspots.forEachIndexed { index, hotspot ->
-        item(key = "hotspot-${hotspot.subcategory}") {
-            HotspotCard(
-                hotspot = hotspot,
-                state = state,
-                onSeeIdeas = if (showIdeas && hotspot.recommendations.isNotEmpty()) ({ actions.onShowIdeasFor(index) }) else null,
-            )
+    // A past report is a record: it shows only what was adopted from it, not the ideas left untried.
+    val ideasFor: (HotspotDto) -> List<RecommendationDto> = { hotspot ->
+        when {
+            view.isProvisional -> emptyList()
+            view.canAdopt -> hotspot.recommendations
+            else -> hotspot.recommendations.filter { it.adopted }
         }
     }
-}
-
-private fun LazyListScope.ideasTab(state: ReportUiState, view: ReportView, actions: ReportTabActions) {
-    val hotspots = view.report.hotspots.sortedBy { it.rank }
-    when {
-        view.isProvisional -> item(key = "ideas-offline") {
-            MessageBanner(stringResource(R.string.report_offline_banner), icon = Icons.Outlined.CloudOff)
-        }
-        hotspots.isEmpty() -> item(key = "special-only") { MessageBanner(stringResource(R.string.report_hotspots_special_only)) }
-        !view.canAdopt -> item(key = "ideas-tried") { AdoptedIdeas(view, state, actions.onOpenDetails) }
-        else -> {
-            val hotspot = hotspots[actions.selectedHotspot.coerceIn(0, hotspots.lastIndex)]
-            item(key = "ideas-intro") {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    TabIntro(stringResource(R.string.report_ideas_subtitle_latest))
-                    if (hotspots.size > 1) HotspotChips(hotspots, hotspot, state, actions.onSelectHotspot)
-                }
+    val intro = when {
+        hotspots.none { ideasFor(it).isNotEmpty() } -> R.string.report_hotspots_intro
+        view.canAdopt -> R.string.report_hotspots_intro_ideas
+        else -> R.string.report_hotspots_intro_tried
+    }
+    item(key = "hotspots-intro") {
+        TabHeading(stringResource(R.string.report_hotspots_title), stringResource(intro))
+    }
+    items(hotspots, key = { "hotspot-${it.subcategory}" }) { hotspot ->
+        val ideas = ideasFor(hotspot)
+        HotspotCard(
+            hotspot = hotspot,
+            label = state.label(hotspot.subcategory),
+            ideaCount = ideas.size,
+            showText = if (view.canAdopt) {
+                pluralStringResource(R.plurals.report_hotspot_ideas_show, ideas.size, ideas.size)
+            } else {
+                pluralStringResource(R.plurals.report_hotspot_tried_show, ideas.size, ideas.size)
+            },
+            expanded = hotspot.subcategory in actions.expandedHotspots,
+            onToggle = { actions.onToggleHotspot(hotspot.subcategory) },
+        ) {
+            if (view.canAdopt) {
+                Text(
+                    stringResource(R.string.report_ideas_subtitle_latest),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
-            if (hotspot.recommendations.isEmpty()) {
-                item(key = "ideas-none") { Text(stringResource(R.string.report_ideas_none), style = MaterialTheme.typography.bodyMedium) }
-            }
-            items(hotspot.recommendations, key = { "idea-${hotspot.subcategory}-${it.interventionId}" }) { rec ->
-                RecommendationCard(
+            ideas.forEach { rec ->
+                RecommendationItem(
                     rec = rec,
-                    canAdopt = true,
+                    canAdopt = view.canAdopt,
                     pending = rec.interventionId in state.pendingAdoptions,
                     notMeasured = view.followupNotMeasured,
                     onToggleAdopt = { actions.onSetAdopted(rec.interventionId, !rec.adopted) },
@@ -292,6 +311,20 @@ private fun LazyListScope.ideasTab(state: ReportUiState, view: ReportView, actio
 
 private fun LazyListScope.progressTab(state: ReportUiState, view: ReportView) {
     val report = view.report
+    val comparison = report.comparison
+    item(key = "progress-heading") { ProgressHeading(comparison) }
+    if (comparison == null) {
+        item(key = "comparison-none") {
+            ReportCard { Text(stringResource(R.string.report_comparison_none), style = MaterialTheme.typography.bodyMedium) }
+        }
+    } else {
+        item(key = "progress-totals") { ProgressTotals(comparison) }
+        val categories = categoryProgress(comparison, report.stats)
+        if (categories.isNotEmpty()) {
+            item(key = "progress-categories-title") { SectionTitle(stringResource(R.string.report_progress_by_category)) }
+            items(categories, key = { "progress-${it.category}" }) { CategoryProgressCard(it, state) }
+        }
+    }
     if (report.impacts.isEmpty()) {
         item(key = "impact-none") {
             ReportCard {
@@ -305,7 +338,6 @@ private fun LazyListScope.progressTab(state: ReportUiState, view: ReportView) {
         }
         items(report.impacts, key = { "impact-${it.interventionId}" }) { ImpactCard(it, state.label(it.targetSubcategory)) }
     }
-    item(key = "comparison") { ComparisonCard(report.comparison, state) }
     view.recap?.let { recap -> item(key = "recap") { RecapCard(recap, state) } }
     item(key = "how-it-works") {
         ReportCard {
@@ -386,15 +418,9 @@ private fun tabLabel(tab: ReportTab): String = stringResource(
     when (tab) {
         ReportTab.OVERVIEW -> R.string.report_tab_overview
         ReportTab.HOTSPOTS -> R.string.report_tab_hotspots
-        ReportTab.IDEAS -> R.string.report_tab_ideas
         ReportTab.PROGRESS -> R.string.report_tab_progress
     },
 )
-
-@Composable
-private fun TabIntro(text: String) {
-    Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-}
 
 @Composable
 private fun GlanceCard(stats: WeeklyStatsDto, comparison: ComparisonDto?) {
@@ -453,7 +479,6 @@ private fun DeltaLine(comparison: ComparisonDto) {
     val (icon, _) = trendIcon(row.trend)
     val (background, content) = when (row.trend) {
         Trend.DECREASED -> MenosanTheme.colors.calm to MenosanTheme.colors.onCalm
-        Trend.INCREASED -> MenosanTheme.colors.pending to MenosanTheme.colors.onPending
         else -> MenosanTheme.colors.mist to MaterialTheme.colorScheme.onSurface
     }
     Row(
@@ -632,179 +657,88 @@ private fun trendIcon(trend: Trend): Pair<ImageVector, Color> = when (trend) {
     Trend.SAME, Trend.UNKNOWN -> Icons.AutoMirrored.Filled.TrendingFlat to MaterialTheme.colorScheme.onSurfaceVariant
 }
 
+/**
+ * A hotspot with its ideas (or, on a past report, the ones adopted) folded under a dropdown button.
+ * They show only when the user opens them, so the tab reads as a short ranked list first.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ComparisonCard(comparison: ComparisonDto?, state: ReportUiState) {
+private fun HotspotCard(
+    hotspot: HotspotDto,
+    label: String,
+    ideaCount: Int,
+    showText: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    ideas: @Composable ColumnScope.() -> Unit,
+) {
     ReportCard {
-        SectionTitle(stringResource(R.string.report_comparison_title))
-        if (comparison == null) {
-            Text(stringResource(R.string.report_comparison_none), style = MaterialTheme.typography.bodyMedium)
-        } else {
-            ComparisonDetails(comparison, state)
-        }
-    }
-}
-
-@Composable
-private fun ComparisonDetails(comparison: ComparisonDto, state: ReportUiState) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.report_comparison_week, formatWeekRange(comparison.previousWeekStart, comparison.previousWeekStart.plusDays(6))),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        val pieces = comparison.pieces
-        val grams = comparison.grams
-        if (pieces.previous > 0 || pieces.current > 0 || (grams.previous == 0 && grams.current == 0)) {
-            ComparisonHeadline(
-                pieces,
-                QuantityUnit.PIECES,
-                when (pieces.trend) {
-                    Trend.DECREASED -> pluralStringResource(R.plurals.report_comparison_fewer, absInt(pieces.delta), absInt(pieces.delta))
-                    Trend.INCREASED -> pluralStringResource(R.plurals.report_comparison_more, absInt(pieces.delta), absInt(pieces.delta))
-                    else -> stringResource(R.string.report_comparison_same)
-                },
-            )
-        }
-        if (grams.previous > 0 || grams.current > 0) {
-            ComparisonHeadline(
-                grams,
-                QuantityUnit.GRAMS,
-                when (grams.trend) {
-                    Trend.DECREASED -> stringResource(R.string.report_comparison_food_less, gramsText(absInt(grams.delta)))
-                    Trend.INCREASED -> stringResource(R.string.report_comparison_food_more, gramsText(absInt(grams.delta)))
-                    else -> stringResource(R.string.report_comparison_food_same)
-                },
-            )
-        }
-        comparison.categories.filter { it.previous > 0 || it.current > 0 }.forEach { row ->
-            val label = state.label(row.category.name).let {
-                if (row.unit == QuantityUnit.GRAMS) stringResource(R.string.report_comparison_category_food, it) else it
-            }
-            ComparisonRow(label, row.previous, row.current, row.unit, row.trend, categoryColor(row.category))
-        }
-        var showAll by rememberSaveable { mutableStateOf(false) }
-        if (comparison.subcategories.isNotEmpty()) {
-            TextButton(onClick = { showAll = !showAll }) {
-                Text(stringResource(if (showAll) R.string.report_comparison_hide_all else R.string.report_comparison_show_all))
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            HotspotIcon(hotspot)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    label,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        quantityText(hotspot.quantity, hotspot.unit),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.alignByBaseline(),
+                    )
+                    Text(
+                        stringResource(R.string.report_hotspot_in_entries, entriesText(hotspot.frequency)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.alignByBaseline(),
+                    )
+                }
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    // Neutral facts, like the idea badges. Sand ("pending") is kept for things that need attention.
+                    hotspot.criteria.mapNotNull { criterionLabel(it) }.forEach { Pill(it, MenosanTheme.colors.mist, MaterialTheme.colorScheme.onSurface) }
+                }
             }
         }
-        if (showAll) {
-            comparison.subcategories.forEach { row ->
-                ComparisonRow(state.label(row.code), row.previous, row.current, row.unit, row.trend, categoryColor(row.category))
+        if (ideaCount > 0) {
+            ExpandToggle(
+                text = if (expanded) stringResource(R.string.report_hotspot_ideas_hide) else showText,
+                expanded = expanded,
+                onClick = onToggle,
+            )
+            AnimatedVisibility(visible = expanded) {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp), content = ideas)
             }
         }
     }
 }
 
+/** The subcategory's picture on a mist tile, with the rank in the top-left corner. */
 @Composable
-private fun ComparisonHeadline(row: ComparisonRowDto, unit: QuantityUnit, summary: String) {
-    val (icon, tint) = trendIcon(row.trend)
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(icon, contentDescription = null, tint = tint)
+private fun HotspotIcon(hotspot: HotspotDto) {
+    val rankDescription = stringResource(R.string.report_hotspot_rank, hotspot.rank)
+    Box(Modifier.size(56.dp)) {
+        Box(
+            Modifier.size(48.dp).align(Alignment.BottomEnd).background(MenosanTheme.colors.mist, MaterialTheme.shapes.medium),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(subcategoryIcon(hotspot.subcategory), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(26.dp))
+        }
+        Box(
+            Modifier
+                .size(22.dp)
+                .align(Alignment.TopStart)
+                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                .clearAndSetSemantics { contentDescription = rankDescription },
+            contentAlignment = Alignment.Center,
+        ) {
             Text(
-                stringResource(R.string.report_comparison_total, quantityText(row.previous, unit), quantityText(row.current, unit)),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                hotspot.rank.toString(),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
-            row.deltaPct?.let {
-                Text(
-                    stringResource(R.string.report_comparison_pct, signedPercent(it)),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Text(summary, style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-@Composable
-private fun ComparisonRow(label: String, previous: Int, current: Int, unit: QuantityUnit, trend: Trend, color: Color) {
-    val (icon, tint) = trendIcon(trend)
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        CategoryDot(color)
-        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-        Text(
-            stringResource(R.string.report_comparison_row, quantityText(previous, unit), quantityText(current, unit)),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(18.dp))
-    }
-}
-
-@Composable
-private fun HotspotCard(hotspot: HotspotDto, state: ReportUiState, onSeeIdeas: (() -> Unit)?) {
-    val eyebrow = buildList {
-        add(if (hotspot.rank == 1) stringResource(R.string.report_top_hotspot) else stringResource(R.string.report_hotspot_rank, hotspot.rank))
-        hotspot.criteria.filter { it != HotspotCriterion.AVOIDABLE }.mapNotNullTo(this) { criterionLabel(it) }
-    }.joinToString(" · ")
-    val detail = buildList {
-        add(stringResource(R.string.report_hotspot_quantity_in, quantityText(hotspot.quantity, hotspot.unit), entriesText(hotspot.frequency)))
-        if (HotspotCriterion.AVOIDABLE in hotspot.criteria) add(stringResource(R.string.report_criterion_avoidable))
-    }.joinToString(" · ")
-    ReportCard {
-        Text(
-            eyebrow.uppercase(),
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(state.label(hotspot.subcategory), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-        Text(detail, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        if (onSeeIdeas != null) {
-            Button(onClick = onSeeIdeas, shape = MaterialTheme.shapes.small, colors = primaryButtonColors(), modifier = Modifier.heightIn(min = 44.dp)) {
-                Text(stringResource(R.string.insights_see_ideas))
-            }
-        }
-    }
-}
-
-@Composable
-private fun HotspotChips(hotspots: List<HotspotDto>, selected: HotspotDto, state: ReportUiState, onSelect: (Int) -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        hotspots.forEachIndexed { index, h ->
-            FilterChip(
-                selected = h == selected,
-                onClick = { onSelect(index) },
-                label = { Text(state.label(h.subcategory)) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
-            )
-        }
-    }
-}
-
-@Composable
-private fun AdoptedIdeas(view: ReportView, state: ReportUiState, onOpenDetails: (String) -> Unit) {
-    val adopted = adoptedIdeas(view.report)
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionTitle(
-            stringResource(R.string.report_ideas_tried_title),
-            subtitle = stringResource(R.string.report_ideas_tried_subtitle).takeIf { adopted.isNotEmpty() },
-        )
-        if (adopted.isEmpty()) {
-            Text(stringResource(R.string.report_ideas_tried_none), style = MaterialTheme.typography.bodyMedium)
-        }
-        adopted.forEach { (hotspot, rec) ->
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    stringResource(R.string.report_ideas_tried_for, state.label(hotspot)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                RecommendationCard(
-                    rec = rec,
-                    canAdopt = false,
-                    pending = false,
-                    notMeasured = view.followupNotMeasured,
-                    onToggleAdopt = {},
-                    onOpenDetails = { onOpenDetails(rec.interventionId) },
-                )
-            }
         }
     }
 }

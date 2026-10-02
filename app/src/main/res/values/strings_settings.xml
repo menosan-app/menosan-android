@@ -6,22 +6,22 @@
     <string name="profile_avatar_description">Account picture with your initials</string>
 
     <string name="profile_preferences">Preferences</string>
-    <string name="profile_appearance">Light / Dark mode</string>
+    <string name="profile_appearance">Appearance</string>
     <string name="profile_appearance_title">Appearance</string>
     <string name="profile_theme_system">System default</string>
-    <string name="profile_theme_light">Light mode</string>
-    <string name="profile_theme_dark">Dark mode</string>
+    <string name="profile_theme_light">Light</string>
+    <string name="profile_theme_dark">Dark</string>
     <string name="profile_done">Done</string>
 
-    <string name="profile_data_privacy">Data &amp; Privacy</string>
-    <string name="profile_privacy_statement">Your audit data is private. It\'s never used for public rankings, leaderboards, or comparisons with other households, and it\'s never shared with third parties.</string>
+    <string name="profile_data_privacy">Data &amp; privacy</string>
+    <string name="profile_privacy_statement">Your waste data is private to you. It\'s never used for public rankings, leaderboards, or comparisons with other households.</string>
     <string name="profile_privacy_notice">Read the privacy notice</string>
     <string name="profile_export">Export my data</string>
-    <string name="profile_exporting">Saving your data…</string>
+    <string name="profile_exporting">Exporting your data…</string>
     <string name="profile_delete">Delete my account &amp; data</string>
 
     <string name="profile_export_title">Export your data?</string>
-    <string name="profile_export_body">Save a copy of all your entries, weekly reports, hotspots, and the ideas you tried as a file on this phone. This needs internet.</string>
+    <string name="profile_export_body">Save a file on this phone with all your entries, weekly reports, hotspots, and the ideas you tried. This needs internet.</string>
     <string name="profile_export_confirm">Export</string>
     <string name="profile_cancel">Cancel</string>
     <string name="profile_export_done">Your data was saved.</string>
@@ -48,12 +48,12 @@
     <string name="profile_logged_out">You\'re logged out. See you soon!</string>
 
     <string name="profile_delete_title">Delete your account &amp; data?</string>
-    <string name="profile_delete_body">This permanently deletes your Menosan account, entries, reports, and saved ideas. This can\'t be undone. You can export your data first if you\'d like a copy.</string>
+    <string name="profile_delete_body">This permanently deletes your Menosan account, entries, reports, and the ideas you tried. It can\'t be undone. If you\'d like a copy, export your data first.</string>
     <string name="profile_delete_type_label">Type DELETE to confirm</string>
     <string name="profile_delete_confirm">Delete</string>
     <string name="profile_deleting">Deleting…</string>
     <string name="profile_delete_offline">Deleting your account needs internet. Please connect and try again.</string>
     <string name="profile_delete_server">We couldn\'t finish deleting your account. Please try again.</string>
-    <string name="profile_delete_sign_in">Your sign-in expired. Log out, log in again, and then try again.</string>
+    <string name="profile_delete_sign_in">Your session expired. Log out, log in again, then try once more.</string>
     <string name="profile_account_deleted">Your account and data were deleted. Thank you for trying Menosan.</string>
 </resources>

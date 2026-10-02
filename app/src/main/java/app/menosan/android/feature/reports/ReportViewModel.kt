@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import app.menosan.android.core.network.ApiError
-import app.menosan.android.data.remote.dto.RecommendationDto
-import app.menosan.android.data.remote.dto.ReportDto
 import app.menosan.android.data.repo.AdoptionResult
 import app.menosan.android.data.repo.RefreshResult
 import app.menosan.android.data.repo.ReportRepository
@@ -43,7 +41,10 @@ data class ReportUiState(
 
 enum class ReportMessage { Adopted, Unadopted, WindowClosed, Offline, Failed }
 
-enum class ReportTab { OVERVIEW, HOTSPOTS, IDEAS, PROGRESS }
+enum class ReportTab { OVERVIEW, HOTSPOTS, PROGRESS }
+
+/** `ReportRoute.tab` value that opens the Hotspots tab with the top hotspot's ideas expanded. */
+const val REPORT_ROUTE_IDEAS = "IDEAS"
 
 @HiltViewModel
 class ReportViewModel @Inject constructor(
@@ -54,8 +55,12 @@ class ReportViewModel @Inject constructor(
     private val route: ReportRoute? = runCatching { savedStateHandle.toRoute<ReportRoute>() }.getOrNull()
     private val weekStart: LocalDate? = runCatching { LocalDate.parse(route?.weekStart) }.getOrNull()
 
-    /** The tab the report opens on, e.g. Ideas when coming from the Insights "Focus this week" card. */
-    val initialTab: ReportTab = ReportTab.entries.firstOrNull { it.name == route?.tab } ?: ReportTab.OVERVIEW
+    /** True when coming from the Insights "Focus this week" card: open on the top hotspot's ideas. */
+    val openTopIdeas: Boolean = route?.tab == REPORT_ROUTE_IDEAS
+
+    /** The tab the report opens on. */
+    val initialTab: ReportTab =
+        if (openTopIdeas) ReportTab.HOTSPOTS else ReportTab.entries.firstOrNull { it.name == route?.tab } ?: ReportTab.OVERVIEW
 
     private val status = MutableStateFlow(ReportUiState(weekStart = weekStart, refreshing = weekStart != null, notFound = weekStart == null))
     private val labels = MutableStateFlow<Map<String, String>>(emptyMap())
@@ -110,8 +115,3 @@ class ReportViewModel @Inject constructor(
         }
     }
 }
-
-internal fun adoptedIdeas(report: ReportDto): List<Pair<String, RecommendationDto>> =
-    report.hotspots.sortedBy { it.rank }
-        .flatMap { hotspot -> hotspot.recommendations.filter { it.adopted }.map { hotspot.subcategory to it } }
-        .distinctBy { (_, rec) -> rec.interventionId }

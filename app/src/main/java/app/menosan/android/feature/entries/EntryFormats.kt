@@ -4,6 +4,7 @@ import app.menosan.android.core.analytics.QuantityUnit
 import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.WasteCategory
 import app.menosan.android.core.time.WeekCalc
+import app.menosan.android.feature.reports.formatWeekRange
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -16,8 +17,8 @@ object EntryFormats {
     private val time = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
     private val weekday = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.ENGLISH)
 
-    fun weekRange(weekStart: LocalDate): String =
-        "${dayMonth.format(weekStart)} – ${dayMonth.format(WeekCalc.weekEnd(weekStart))}"
+    /** Same style as report weeks ("Sep 6 – 12", "Sep 27 – Oct 3"), so one screen never shows both. */
+    fun weekRange(weekStart: LocalDate): String = formatWeekRange(weekStart, WeekCalc.weekEnd(weekStart))
 
     fun date(instant: Instant): String = fullDate.format(instant.atZone(WeekCalc.ZONE))
 
