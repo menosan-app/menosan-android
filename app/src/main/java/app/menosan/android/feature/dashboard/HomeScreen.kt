@@ -288,14 +288,14 @@ private fun LogButtons(actions: HomeActions, content: Color, container: Color, f
     val online = LocalOnline.current
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            val manual = stringResource(R.string.dashboard_log_manual)
+            val manual = stringResource(R.string.action_log_manually)
             if (filled) {
                 CardButton(manual, content, container, Modifier.weight(1f), Icons.Outlined.EditNote, actions.onLogManually)
             } else {
                 OutlinedLogButton(manual, Icons.Outlined.EditNote, content, actions.onLogManually, Modifier.weight(1f))
             }
             OutlinedLogButton(
-                stringResource(R.string.dashboard_log_photo),
+                stringResource(R.string.action_take_photo),
                 if (online) Icons.Outlined.CameraAlt else Icons.Outlined.CloudOff,
                 content,
                 actions.onLogWithPhoto,

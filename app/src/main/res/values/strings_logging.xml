@@ -11,7 +11,7 @@
     <string name="entry_subcategory_title">Subcategory</string>
     <string name="entry_subcategory_hint">Pick the closest match</string>
     <string name="entry_subcategory_placeholder">Choose a subcategory</string>
-    <string name="entry_name_title">Item name</string>
+    <string name="entry_name_title">Item Name</string>
     <string name="entry_name_placeholder">e.g., Leftover rice</string>
     <string name="entry_quantity_title">Quantity</string>
     <string name="entry_quantity_hint">Number of pieces (1–999)</string>
@@ -34,11 +34,11 @@
     <string name="entry_error_quantity">Enter a number from 1 to 999.</string>
     <string name="entry_error_quantity_grams">Enter a weight from 1 to 10,000 g.</string>
 
-    <string name="log_title_new">Log waste</string>
-    <string name="log_title_edit">Edit entry</string>
+    <string name="log_title_new">Log Waste</string>
+    <string name="log_title_edit">Edit Entry</string>
     <string name="log_offline_banner">You\'re offline. This entry will sync when you\'re back online.</string>
-    <string name="log_save">Save entry</string>
-    <string name="log_save_changes">Save changes</string>
+    <string name="log_save">Save Entry</string>
+    <string name="log_save_changes">Save Changes</string>
     <string name="log_saved">Entry saved. Nice work keeping track!</string>
     <string name="log_saved_offline">Saved on this phone. It\'ll sync when you\'re back online.</string>
     <string name="log_saved_edit">Changes saved.</string>
@@ -49,14 +49,10 @@
 
     <string name="audit_title">Audit</string>
     <string name="audit_subtitle">Track your waste, build better habits.</string>
-    <string name="audit_this_week">This week</string>
+    <string name="audit_this_week">This Week</string>
     <string name="quantity_grams">%1$s g</string>
     <string name="quantity_kilograms">%1$s kg</string>
-    <string name="audit_log_manual">Log manually</string>
-    <string name="audit_log_manual_body">Type in the details</string>
-    <string name="audit_scan">Scan a photo</string>
-    <string name="audit_scan_body">Take or choose a photo</string>
-    <string name="audit_entries_title">This week\'s entries</string>
+    <string name="audit_entries_title">This Week\'s Entries</string>
     <string name="audit_empty_title">Nothing logged yet this week</string>
     <string name="audit_empty_body">Your entries will show up here once you log them. Every entry helps you spot small changes.</string>
     <string name="audit_pending_title">Entries waiting to sync</string>
@@ -72,18 +68,18 @@
         <item quantity="other">%d changes were for a week that had already closed, so we kept the saved versions.</item>
     </plurals>
     <string name="audit_dismiss">Dismiss</string>
-    <string name="audit_earlier_show">Show earlier weeks</string>
-    <string name="audit_earlier_hide">Hide earlier weeks</string>
+    <string name="audit_earlier_show">Show Earlier Weeks</string>
+    <string name="audit_earlier_hide">Hide Earlier Weeks</string>
     <string name="audit_earlier_note">Past weeks are read-only.</string>
-    <string name="entries_all_title">All entries</string>
+    <string name="entries_all_title">All Entries</string>
 
     <string name="sync_synced">Synced</string>
     <string name="sync_pending">To sync</string>
     <string name="sync_failed">Couldn\'t sync</string>
     <string name="entry_more_options">More options for %1$s</string>
-    <string name="entry_menu_details">View details</string>
-    <string name="entry_menu_edit">Edit entry</string>
-    <string name="entry_menu_delete">Delete entry</string>
+    <string name="entry_menu_details">View Details</string>
+    <string name="entry_menu_edit">Edit Entry</string>
+    <string name="entry_menu_delete">Delete Entry</string>
     <string name="entry_row_meta">%1$s · %2$s</string>
 
     <string name="delete_title">Delete this entry?</string>
@@ -92,7 +88,7 @@
     <string name="delete_week_closed">This entry is from a past week, so it can\'t be deleted.</string>
     <string name="delete_failed">Couldn\'t delete this entry. Try again.</string>
 
-    <string name="details_title">Entry details</string>
+    <string name="details_title">Entry Details</string>
     <string name="details_item_name">Item name</string>
     <string name="details_quantity">Quantity</string>
     <string name="details_date">Date</string>

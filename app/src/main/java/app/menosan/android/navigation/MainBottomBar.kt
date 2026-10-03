@@ -142,12 +142,12 @@ fun AddEntrySheet(
             val online = LocalOnline.current
             AddEntryOption(
                 if (online) Icons.Filled.PhotoLibrary else Icons.Outlined.CloudOff,
-                R.string.add_entry_photo,
-                if (online) R.string.add_entry_photo_body else R.string.photo_offline_body,
+                R.string.action_take_photo,
+                if (online) R.string.action_take_photo_body else R.string.photo_offline_body,
                 onScanWithPhoto,
                 enabled = online,
             )
-            AddEntryOption(Icons.Filled.EditNote, R.string.add_entry_manual, R.string.add_entry_manual_body, onLogManually)
+            AddEntryOption(Icons.Filled.EditNote, R.string.action_log_manually, R.string.action_log_manually_body, onLogManually)
         }
     }
 }

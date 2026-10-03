@@ -4,9 +4,13 @@
     <string name="brand_tagline">Less Waste, Better Habits</string>
 
     <string name="action_cancel">Cancel</string>
-    <string name="action_try_again">Try again</string>
+    <string name="action_try_again">Try Again</string>
     <string name="action_delete">Delete</string>
-    <string name="action_open_report">Open report</string>
+    <string name="action_open_report">Open Report</string>
+    <string name="action_log_manually">Log Manually</string>
+    <string name="action_take_photo">Take a Photo</string>
+    <string name="action_log_manually_body">Type in the details</string>
+    <string name="action_take_photo_body">Take or choose a photo</string>
     <plurals name="count_entries">
         <item quantity="one">%d entry</item>
         <item quantity="other">%d entries</item>
@@ -21,7 +25,7 @@
     </plurals>
     <string name="count_joined">%1$s · %2$s</string>
     <string name="quantity_change">%1$s → %2$s</string>
-    <string name="impact_title">How your changes went</string>
+    <string name="impact_title">How Your Changes Went</string>
     <string name="impact_decreased">Decreased</string>
     <string name="impact_same">No change</string>
     <string name="impact_increased">Increased</string>
@@ -37,21 +41,17 @@
     <string name="tab_audit">Audit</string>
     <string name="tab_insights">Insights</string>
     <string name="tab_profile">Profile</string>
-    <string name="nav_report">Weekly report</string>
+    <string name="nav_report">Weekly Report</string>
 
-    <string name="add_entry_title">Add an entry</string>
+    <string name="add_entry_title">Add an Entry</string>
     <string name="add_entry_subtitle">Choose how to log your waste.</string>
-    <string name="add_entry_photo">Scan a photo</string>
-    <string name="add_entry_photo_body">Take or choose a photo.</string>
-    <string name="add_entry_manual">Log manually</string>
-    <string name="add_entry_manual_body">Type in the details.</string>
 
     <string name="welcome_title">A cleaner home starts with small steps</string>
     <string name="welcome_body">Log your household\'s waste, see where most of it comes from, and get simple ideas to cut it down.</string>
-    <string name="welcome_create_account">Create account</string>
-    <string name="welcome_log_in">Log in</string>
+    <string name="welcome_create_account">Create Account</string>
+    <string name="welcome_log_in">Log In</string>
 
-    <string name="sign_in_title">Log in</string>
+    <string name="sign_in_title">Log In</string>
     <string name="sign_in_welcome_back">Welcome back to Menosan</string>
     <string name="sign_in_new_here">New here?</string>
     <string name="sign_in_continue_with_google">Continue with Google</string>
@@ -65,23 +65,23 @@
     <string name="sign_in_error_firebase">Check your internet connection and try again.</string>
     <string name="sign_in_error_expired">Your session expired. Log in again.</string>
 
-    <string name="create_account_title">Create your account</string>
+    <string name="create_account_title">Create Your Account</string>
     <string name="create_account_subtitle">You\'ll create it with your Google account.</string>
     <string name="create_account_signed_in_as">Continuing as %1$s</string>
     <string name="create_account_consent">I\'ve read the privacy notice and agree to Menosan storing my data as it describes.</string>
     <string name="create_account_consent_hint">Tick the box above to continue.</string>
-    <string name="create_account_button">Create my account</string>
+    <string name="create_account_button">Create My Account</string>
     <string name="create_account_have_account">Already have an account?</string>
-    <string name="create_account_use_different">Use a different Google account</string>
+    <string name="create_account_use_different">Use a Different Google Account</string>
     <string name="create_account_error_title">Couldn\'t create your account</string>
     <string name="create_account_creating_title">Creating your account</string>
     <string name="create_account_creating_body">Getting Menosan ready for you.</string>
 
-    <string name="privacy_title">Your privacy</string>
+    <string name="privacy_title">Your Privacy</string>
     <string name="privacy_short_private">Your data is private. No rankings, leaderboards, or comparisons with other households.</string>
     <string name="privacy_short_photos">Photos are only used to suggest details for an entry. They\'re never stored.</string>
     <string name="privacy_short_control">Export or delete all your data anytime.</string>
-    <string name="privacy_read_full">Read the full privacy notice</string>
+    <string name="privacy_read_full">Read the Full Privacy Notice</string>
     <string name="privacy_what_we_store">• We store your Google email and name, the waste you log (name, category, quantity, and time), your weekly reports, and the ideas you choose to try.</string>
     <string name="privacy_photos">• Photos are only used to suggest details for an entry. They\'re never stored.</string>
     <string name="privacy_ai">• Photos and your weekly waste totals are processed by Google\'s Gemini AI to suggest entry details and pick ideas for you. Your email and name are never sent.</string>
@@ -92,12 +92,12 @@
     <string name="ready_title">You\'re in!</string>
     <string name="ready_title_name">You\'re in, %1$s!</string>
     <string name="ready_body">Let\'s get started on a cleaner, greener Dumaguete. Here\'s what you can do next:</string>
-    <string name="ready_log_title">Log your waste</string>
+    <string name="ready_log_title">Log Your Waste</string>
     <string name="ready_log_body">Scan a photo or log manually</string>
-    <string name="ready_dashboard_title">Track your week</string>
+    <string name="ready_dashboard_title">Track Your Week</string>
     <string name="ready_dashboard_body">Your entries, in Audit</string>
-    <string name="ready_insights_title">Get ideas</string>
+    <string name="ready_insights_title">Get Ideas</string>
     <string name="ready_insights_body">Weekly hotspots, in Insights</string>
-    <string name="ready_get_started">Get started</string>
+    <string name="ready_get_started">Get Started</string>
 
 </resources>

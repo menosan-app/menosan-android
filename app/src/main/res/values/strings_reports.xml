@@ -2,16 +2,16 @@
 <resources>
     <string name="insights_title">Insights</string>
     <string name="insights_subtitle">See your waste, find a hotspot, and try a small change.</string>
-    <string name="insights_latest_label">Your latest report</string>
+    <string name="insights_latest_label">Your Latest Report</string>
     <plurals name="insights_hotspots_found">
         <item quantity="one">%d hotspot found</item>
         <item quantity="other">%d hotspots found</item>
     </plurals>
-    <string name="insights_focus_title">Focus this week</string>
+    <string name="insights_focus_title">Focus This Week</string>
     <string name="insights_focus_body">Your top hotspot last week: %1$s across %2$s.</string>
     <string name="insights_focus_hint">Start with one easy change</string>
-    <string name="insights_see_ideas">See ideas</string>
-    <string name="insights_past_reports">Past reports</string>
+    <string name="insights_see_ideas">See Ideas</string>
+    <string name="insights_past_reports">Past Reports</string>
     <string name="insights_past_private">Private to your household</string>
     <string name="insights_empty_title">No reports yet</string>
     <string name="insights_empty_body">Your first report arrives after your first week of logging.</string>
@@ -23,7 +23,7 @@
         <item quantity="other">%d ideas tried</item>
     </plurals>
 
-    <string name="reports_offline_summary">Offline summary</string>
+    <string name="reports_offline_summary">Offline Summary</string>
     <string name="reports_latest">Latest</string>
     <plurals name="reports_hotspots">
         <item quantity="one">%d hotspot</item>
@@ -36,35 +36,35 @@
     <string name="report_tab_overview">Overview</string>
     <string name="report_tab_hotspots">Hotspots</string>
     <string name="report_tab_progress">Progress</string>
-    <string name="report_glance_title">Week at a glance</string>
+    <string name="report_glance_title">Week at a Glance</string>
     <string name="report_delta_line">%1$s (%2$s)</string>
-    <string name="report_focus_title">Where to focus</string>
-    <string name="report_explore_hotspots">See all hotspots</string>
-    <string name="report_one_idea_title">One idea to try</string>
-    <string name="report_see_all_ideas">See all ideas</string>
-    <string name="report_show_logged">Show logged items</string>
-    <string name="report_hide_logged">Hide logged items</string>
+    <string name="report_focus_title">Where to Focus</string>
+    <string name="report_explore_hotspots">See All Hotspots</string>
+    <string name="report_one_idea_title">One Idea to Try</string>
+    <string name="report_see_all_ideas">See All Ideas</string>
+    <string name="report_show_logged">Show Logged Items</string>
+    <string name="report_hide_logged">Hide Logged Items</string>
     <string name="report_hotspots_intro">What you logged most often, or in the largest amounts, this week.</string>
     <string name="report_hotspots_intro_ideas">What you logged most often, or in the largest amounts, this week. Open one to see simple ideas for it.</string>
     <string name="report_hotspots_intro_tried">What you logged most often, or in the largest amounts, this week. Open a hotspot to see what you tried for it.</string>
     <plurals name="report_hotspot_ideas_show">
-        <item quantity="one">See %d idea</item>
-        <item quantity="other">See %d ideas</item>
+        <item quantity="one">See %d Idea</item>
+        <item quantity="other">See %d Ideas</item>
     </plurals>
     <plurals name="report_hotspot_tried_show">
-        <item quantity="one">See the idea you tried</item>
-        <item quantity="other">See the %d ideas you tried</item>
+        <item quantity="one">See the Idea You Tried</item>
+        <item quantity="other">See the %d Ideas You Tried</item>
     </plurals>
-    <string name="report_hotspot_ideas_hide">Hide ideas</string>
+    <string name="report_hotspot_ideas_hide">Hide Ideas</string>
     <string name="report_expanded">Expanded</string>
     <string name="report_collapsed">Collapsed</string>
     <string name="report_hotspot_rank">Hotspot %1$d</string>
-    <string name="report_hotspots_title">Your hotspots</string>
+    <string name="report_hotspots_title">Your Hotspots</string>
     <string name="report_hotspot_in_entries">in %1$s</string>
-    <string name="report_progress_title">Your progress</string>
+    <string name="report_progress_title">Your Progress</string>
     <string name="report_progress_compared">Compared with the week of %1$s</string>
     <string name="report_progress_total_pieces">Total pieces</string>
-    <string name="report_progress_by_category">By category</string>
+    <string name="report_progress_by_category">By Category</string>
     <string name="report_progress_no_change">No change</string>
     <plurals name="report_progress_fewer_pieces">
         <item quantity="one">%d fewer piece</item>
@@ -78,11 +78,11 @@
     <string name="report_progress_grams_more">%1$s more</string>
     <string name="report_progress_new">New</string>
     <string name="report_progress_change_in_brackets">(%1$s)</string>
-    <string name="report_progress_show_more">Show more</string>
-    <string name="report_progress_show_less">Show less</string>
+    <string name="report_progress_show_more">Show More</string>
+    <string name="report_progress_show_less">Show Less</string>
     <string name="report_progress_none_title">Nothing to measure yet</string>
     <string name="report_progress_none_body">When you try an idea, your next report shows whether that item went down, stayed the same, or went up.</string>
-    <string name="report_progress_how_title">How this comparison works</string>
+    <string name="report_progress_how_title">How This Comparison Works</string>
     <string name="report_progress_how_body">Menosan compares what you logged for an item in the week you picked an idea with the week after. A drop is a good sign, but it can\'t show exactly what caused it.</string>
     <string name="report_not_found">There\'s no report for this week. Reports are made for finished weeks with at least one entry.</string>
     <string name="report_showing_saved">Showing your saved copy. Connect to the internet to update it.</string>
@@ -92,7 +92,7 @@
     <string name="report_totals_pieces">Pieces</string>
     <string name="report_totals_food">Food waste</string>
     <string name="report_categories_share_note">Share of this week\'s entries.</string>
-    <string name="report_categories_title">Entries by category</string>
+    <string name="report_categories_title">Entries by Category</string>
     <string name="report_category_share">%1$s%%</string>
     <string name="report_breakdown_empty">Nothing in the analyzed categories this week.</string>
     <string name="report_special_line">Special waste: %1$s. Logged, but not counted in this report.</string>
@@ -126,14 +126,14 @@
     <string name="report_keep_it_up">Keep it up</string>
     <string name="report_trying_this">You\'re trying this</string>
     <string name="report_tried_this">You tried this</string>
-    <string name="report_note_for_you">A note for you</string>
-    <string name="report_view_details">View details</string>
-    <string name="report_adopt">Try this</string>
+    <string name="report_note_for_you">A Note for You</string>
+    <string name="report_view_details">View Details</string>
+    <string name="report_adopt">Try This</string>
     <string name="report_adopted">Trying</string>
     <string name="report_adopted_undo_description">You\'re trying this. Tap to stop.</string>
-    <string name="report_stop_trying">Stop trying this</string>
+    <string name="report_stop_trying">Stop Trying This</string>
     <string name="report_close">Close</string>
-    <string name="report_what_to_do">What to do</string>
+    <string name="report_what_to_do">What to Do</string>
     <string name="report_steps">Steps</string>
     <string name="report_not_measured">Not measured. Nothing was logged the following week.</string>
     <string name="report_adopt_done">Added. Give it a try this week!</string>
@@ -148,7 +148,7 @@
     <string name="report_impact_same_body">About the same. Small steps still count, so keep going.</string>
     <string name="report_impact_increased_body">That\'s okay. Try a smaller step this week.</string>
 
-    <string name="report_recap_title">Last week\'s report (%1$s)</string>
+    <string name="report_recap_title">Last Week\'s Report (%1$s)</string>
     <string name="report_recap_hotspots">Hotspots: %1$s</string>
     <string name="report_recap_tried">You tried: %1$s</string>
 </resources>

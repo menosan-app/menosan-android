@@ -257,11 +257,11 @@ private fun CategoryCount(category: WasteCategory, total: CategoryTotal, modifie
 private fun QuickActions(onLogManually: () -> Unit, onScanWithPhoto: () -> Unit, modifier: Modifier = Modifier) {
     val online = LocalOnline.current
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier) {
-        QuickAction(Icons.Outlined.EditNote, R.string.audit_log_manual, R.string.audit_log_manual_body, onLogManually, Modifier.weight(1f))
+        QuickAction(Icons.Outlined.EditNote, R.string.action_log_manually, R.string.action_log_manually_body, onLogManually, Modifier.weight(1f))
         QuickAction(
             if (online) Icons.Outlined.CameraAlt else Icons.Outlined.CloudOff,
-            R.string.audit_scan,
-            if (online) R.string.audit_scan_body else R.string.photo_needs_internet_short,
+            R.string.action_take_photo,
+            if (online) R.string.action_take_photo_body else R.string.photo_needs_internet_short,
             onScanWithPhoto,
             Modifier.weight(1f),
             enabled = online,

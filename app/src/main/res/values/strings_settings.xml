@@ -13,12 +13,12 @@
     <string name="profile_theme_dark">Dark</string>
     <string name="profile_done">Done</string>
 
-    <string name="profile_data_privacy">Data &amp; privacy</string>
+    <string name="profile_data_privacy">Data &amp; Privacy</string>
     <string name="profile_privacy_statement">Your waste data is private to you. No rankings, leaderboards, or comparisons with other households.</string>
-    <string name="profile_privacy_notice">Read the privacy notice</string>
-    <string name="profile_export">Export my data</string>
+    <string name="profile_privacy_notice">Read the Privacy Notice</string>
+    <string name="profile_export">Export My Data</string>
     <string name="profile_exporting">Exporting your data…</string>
-    <string name="profile_delete">Delete my account &amp; data</string>
+    <string name="profile_delete">Delete My Account &amp; Data</string>
 
     <string name="profile_export_title">Export your data?</string>
     <string name="profile_export_body">Save a file on this phone with all your entries, weekly reports, hotspots, and the ideas you tried. This needs internet.</string>
@@ -28,7 +28,7 @@
     <string name="profile_export_server">Couldn\'t get your data right now. Try again in a moment.</string>
     <string name="profile_export_write_failed">Couldn\'t save the file there. Try another folder.</string>
 
-    <string name="profile_log_out">Log out</string>
+    <string name="profile_log_out">Log Out</string>
     <string name="profile_logging_out">Logging out…</string>
     <plurals name="profile_pending_note">
         <item quantity="one">%d entry is still waiting to sync.</item>
@@ -40,8 +40,8 @@
         <item quantity="other">%d entries are only saved on this phone. If you log out now, they will be lost.</item>
     </plurals>
     <string name="profile_logout_fix_hint">Menosan couldn\'t save them. To try again, edit them in Audit.</string>
-    <string name="profile_logout_sync_first">Try to sync first</string>
-    <string name="profile_logout_anyway">Log out anyway</string>
+    <string name="profile_logout_sync_first">Try to Sync First</string>
+    <string name="profile_logout_anyway">Log Out Anyway</string>
     <string name="profile_logout_syncing">Syncing your entries. Try logging out again in a moment.</string>
     <string name="profile_logout_sync_offline">Your entries will sync when you\'re back online. Connect, then try again.</string>
     <string name="profile_logout_failed">Logging out didn\'t finish. Try again.</string>
