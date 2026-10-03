@@ -14,7 +14,7 @@ data class MeDto(
 )
 
 @Serializable
-data class CreateAccountRequest(val consent: Boolean)
+data class CreateAccountRequest(val consent: Boolean, val displayName: String? = null)
 
 @Serializable
 data class CurrentWeekDto(

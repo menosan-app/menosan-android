@@ -43,8 +43,8 @@ class AccountRepository @Inject constructor(
         }
     }
 
-    suspend fun createAccount(): ApiResult<MeDto> =
-        safeApiCall { api.createAccount(CreateAccountRequest(consent = true)) }.also {
+    suspend fun createAccount(displayName: String): ApiResult<MeDto> =
+        safeApiCall { api.createAccount(CreateAccountRequest(consent = true, displayName = displayName)) }.also {
             if (it is ApiResult.Success) markConfirmed()
         }
 

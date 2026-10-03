@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraAlt
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +43,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -79,6 +83,7 @@ fun CreateAccountScreen(
         state = state,
         onBack = onBack,
         onConsentChange = viewModel::onConsentChange,
+        onNameChange = viewModel::onNameChange,
         onContinue = { viewModel.onContinue(context) },
         onUseDifferentAccount = viewModel::useDifferentAccount,
         onLogIn = onLogIn,
@@ -91,6 +96,7 @@ fun CreateAccountContent(
     state: CreateAccountUiState,
     onBack: (() -> Unit)?,
     onConsentChange: (Boolean) -> Unit,
+    onNameChange: (String) -> Unit,
     onContinue: () -> Unit,
     onUseDifferentAccount: () -> Unit,
     onLogIn: () -> Unit,
@@ -109,7 +115,7 @@ fun CreateAccountContent(
         CreateAccountPhase.SigningIn -> {
             BrandLoading(
                 title = stringResource(R.string.sign_in_signing_in),
-                subtitle = null,
+                subtitle = if (state.slowServer) stringResource(R.string.server_waking) else null,
                 modifier = Modifier.safeDrawingPadding(),
             )
             return
@@ -142,6 +148,20 @@ fun CreateAccountContent(
                     ?: stringResource(R.string.create_account_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        if (state.signedInEmail != null) {
+            OutlinedTextField(
+                value = state.name,
+                onValueChange = onNameChange,
+                label = { Text(stringResource(R.string.create_account_name_label)) },
+                placeholder = { Text(stringResource(R.string.create_account_name_placeholder)) },
+                supportingText = { Text(stringResource(R.string.create_account_name_hint)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done),
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
@@ -261,12 +281,29 @@ fun PrivacyNotice(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
+private fun CreateAccountNamePreview() {
+    MenosanTheme {
+        CreateAccountContent(
+            state = CreateAccountUiState(signedInEmail = "liza@example.com", consentChecked = true),
+            onBack = {},
+            onConsentChange = {},
+            onNameChange = {},
+            onContinue = {},
+            onUseDifferentAccount = {},
+            onLogIn = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun CreateAccountContentPreview() {
     MenosanTheme {
         CreateAccountContent(
             state = CreateAccountUiState(),
             onBack = {},
             onConsentChange = {},
+            onNameChange = {},
             onContinue = {},
             onUseDifferentAccount = {},
             onLogIn = {},

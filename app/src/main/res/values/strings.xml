@@ -65,9 +65,12 @@
     <string name="sign_in_error_firebase">Check your internet connection and try again.</string>
     <string name="sign_in_error_expired">Your session expired. Log in again.</string>
 
-    <string name="create_account_title">Create Your Account</string>
+    <string name="create_account_title">Create your Account</string>
     <string name="create_account_subtitle">You\'ll create it with your Google account.</string>
     <string name="create_account_signed_in_as">Continuing as %1$s</string>
+    <string name="create_account_name_label">Your name</string>
+    <string name="create_account_name_placeholder">What should we call you?</string>
+    <string name="create_account_name_hint">We\'ll use it to greet you in the app. Only you can see it.</string>
     <string name="create_account_consent">I\'ve read the privacy notice and agree to Menosan storing my data as it describes.</string>
     <string name="create_account_consent_hint">Tick the box above to continue.</string>
     <string name="create_account_button">Create My Account</string>

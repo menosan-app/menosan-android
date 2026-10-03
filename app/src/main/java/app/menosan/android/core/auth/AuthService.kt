@@ -1,8 +1,11 @@
 package app.menosan.android.core.auth
 
+import android.util.Log
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.userProfileChangeRequest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,6 +23,8 @@ interface AuthService : IdTokenProvider {
     val authState: Flow<AuthUser?>
 
     suspend fun signInWithGoogleIdToken(googleIdToken: String): AuthUser
+
+    suspend fun updateDisplayName(name: String): Boolean
 
     fun signOut()
 }
@@ -43,6 +48,19 @@ class FirebaseAuthService @Inject constructor(
         return user.toAuthUser()
     }
 
+    override suspend fun updateDisplayName(name: String): Boolean {
+        val user = auth.currentUser ?: return false
+        return try {
+            user.updateProfile(userProfileChangeRequest { displayName = name }).await()
+            true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.w(TAG, "Couldn't save the display name: ${e.javaClass.simpleName}")
+            false
+        }
+    }
+
     override fun signOut() = auth.signOut()
 
     override fun idToken(forceRefresh: Boolean): String? {
@@ -58,5 +76,6 @@ class FirebaseAuthService @Inject constructor(
 
     private companion object {
         const val TOKEN_TIMEOUT_SECONDS = 20L
+        const val TAG = "AuthService"
     }
 }
