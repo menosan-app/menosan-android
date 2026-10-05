@@ -19,5 +19,5 @@ Kotlin, Jetpack Compose, Material 3, Hilt, Room, WorkManager, Retrofit, and Fire
 The app bundles the Roboto font, licensed under the SIL Open Font License 1.1 (see [`licenses/Roboto-OFL.txt`](licenses/Roboto-OFL.txt)).
 
 ## Download
-[Menosan APK]([https://example.com](https://drive.google.com/drive/folders/1MOcX1rN7PNDpJaPWK8Z_i1UyUL2ScjZ7?usp=sharing)
+[Menosan APK](https://drive.google.com/drive/folders/1MOcX1rN7PNDpJaPWK8Z_i1UyUL2ScjZ7?usp=sharing)
 
