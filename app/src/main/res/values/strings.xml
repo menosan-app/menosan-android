@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="brand_wordmark" translatable="false">menosan</string>
+    <string name="brand_wordmark" translatable="false">Menosan</string>
     <string name="brand_tagline">Less Waste, Better Habits</string>
 
     <string name="action_cancel">Cancel</string>
